@@ -1,13 +1,15 @@
 // @vitest-environment node
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { normalizeNameKey, validateRetaFinalPayload } from '../../src/js/logic/reta-final-core.js';
 
 const read = (rel) => JSON.parse(readFileSync(new URL(rel, import.meta.url), 'utf8'));
-const plano = read('../../docs/cronogramas/plano-tjsp-escrevente-2026.json');
-const edital = read('../../docs/editais/edital-tjsp-escrevente-2026.json');
+// Material privado (gitignored): sem ele (CI, clone novo) a suíte é pulada.
+const temPrivado = existsSync(new URL('../../privado/cronogramas/plano-tjsp-escrevente-2026.json', import.meta.url));
+const plano = temPrivado ? read('../../privado/cronogramas/plano-tjsp-escrevente-2026.json') : null;
+const edital = temPrivado ? read('../../privado/editais/edital-tjsp-escrevente-2026.json') : null;
 
-describe('plano de estudos TJ-SP Escrevente (cronograma dia a dia)', () => {
+describe.skipIf(!temPrivado)('plano de estudos TJ-SP Escrevente (cronograma dia a dia)', () => {
   it('é aceito pelo importador de cronograma', () => {
     expect(validateRetaFinalPayload(plano)).toEqual({ valid: true, errors: [] });
   });
@@ -68,7 +70,7 @@ describe('plano de estudos TJ-SP Escrevente (cronograma dia a dia)', () => {
   });
 });
 
-describe('aulas aprofundadas (conteúdo de 1 hora) das semanas 1 e 2', () => {
+describe.skipIf(!temPrivado)('aulas aprofundadas (conteúdo de 1 hora) das semanas 1 e 2', () => {
   const diasComAula = ['2026-11-16', '2026-11-17', '2026-11-18', '2026-11-19', '2026-11-20', '2026-11-23', '2026-11-24', '2026-11-25', '2026-11-26'];
 
   it.each(diasComAula)('%s: o bloco de teoria é uma aula completa', async (data) => {

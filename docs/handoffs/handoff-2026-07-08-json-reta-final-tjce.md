@@ -42,7 +42,7 @@ Convertido o cronograma HTML do usuário (`cronograma_tjce_2026_page_aware.html`
 de "cronograma de reta final", usando o catálogo de aulas PDF do curso Gran (arquivo MD com
 391 aulas em 14 disciplinas) como fonte dos nomes de aula.
 
-**Deliverable:** `docs/cronogramas/reta-final-tjce-2026.json` — 34 dias, 86 blocos,
+**Deliverable:** `privado/cronogramas/reta-final-tjce-2026.json` — 34 dias, 86 blocos,
 `dataFinal: 2026-08-09` (dia da prova), `minutosPadrao: 60`.
 
 ## Decisões (confirmadas com o usuário)
@@ -74,7 +74,7 @@ testes novos; a validação acima cumpre o papel proporcional ao risco.
 
 ## Estado atual / o que falta
 
-- Concluído. O usuário só precisa importar `docs/cronogramas/reta-final-tjce-2026.json`
+- Concluído. O usuário só precisa importar `privado/cronogramas/reta-final-tjce-2026.json`
   pelo fluxo "Importar reta final" do app e marcar como concluído o que já estudou nos
   dias 29/06–07/07 (esses blocos rolam para hoje).
 

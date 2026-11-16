@@ -96,3 +96,16 @@ src/js/firebase/firebase-config.js
 .ai-project-state.lock
 .ai-transaction-*/
 # AI-HANDOFF:LOCAL-STATE:END
+
+# --- Privado: estratégia de concursos (bancas, planos, conteúdo, editais verticalizados) ---
+# Nunca versionar. Guardar só localmente / em documento privado.
+/privado/
+/docs/estrategia/
+/docs/plano-tjsp/
+/docs/cronogramas/
+/docs/editais/
+**/privado/
+*.plano-estudos.json
+*cronograma*.json
+*edital*.json
+!/src/**/*cronograma*.json

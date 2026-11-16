@@ -61,6 +61,6 @@ Plano executado na íntegra (4 funcionalidades, TDD red→green em todos os pass
 ## O que falta / próximos passos
 
 1. **Nada obrigatório do plano.** Todos os 7 passos foram concluídos.
-2. Opcional: validação manual visual (importar `docs/cronogramas/reta-final-tjce-2026.json`, quick-mark num bloco, conferir Histórico/Calendário/modal "Editar Estudo" e o hero) — os fluxos estão cobertos por E2E, mas ninguém olhou o layout dos botões novos num navegador real.
+2. Opcional: validação manual visual (importar `privado/cronogramas/reta-final-tjce-2026.json`, quick-mark num bloco, conferir Histórico/Calendário/modal "Editar Estudo" e o hero) — os fluxos estão cobertos por E2E, mas ninguém olhou o layout dos botões novos num navegador real.
 3. Pré-existente: corrigir `bump-cache.test.js` (shebang em `scripts/bump-cache.mjs`) — chip de tarefa já criado.
 4. Pré-existente: seed de estado no projeto `mock` do Playwright não funciona (vários specs falham lá); decidir se o projeto mock deve ignorar specs com seed ou suportá-lo.

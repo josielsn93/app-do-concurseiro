@@ -7,6 +7,13 @@ Orientações para qualquer IA que trabalhe neste repositório.
 - **Sempre atualize o GitHub** ao final de uma tarefa: faça commit e push das alterações.
 - **Se não conseguir atualizar o GitHub**, forneça ao usuário os comandos de terminal exatos para que ele mesmo faça o push (ex.: `git add`, `git commit`, `git push`).
 
+## Privacidade da estratégia de concursos
+
+- **Nunca versionar** estratégia sobre bancas, matérias, conteúdo de aulas, planos de estudo, cronogramas e editais verticalizados. Tudo isso vive em `privado/` (gitignored).
+- Antes de criar plano/aula, **leia `privado/estrategia/CEREBRO.md`** (se existir) e atualize seu Registro de revisões ao final.
+- Handoffs, commits e PRs públicos descrevem só mecânica técnica, nunca estratégia ou conteúdo.
+- Não ampliar o que já está no histórico público; não reescrever histórico sem pedido explícito do usuário.
+
 ## Handoff
 
 - **Ao final de cada sessão, sempre crie um handoff** para outra IA entender tudo o que foi feito e continuar o trabalho caso não tenha sido concluído. O handoff deve descrever: o que foi feito, o estado atual, o que falta e os próximos passos.

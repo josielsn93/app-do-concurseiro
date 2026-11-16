@@ -1,12 +1,14 @@
 // @vitest-environment node
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { validateEditalImportPayload } from '../../src/js/logic/edital-import-core.js';
 
-const DIR = new URL('../../docs/editais/', import.meta.url);
-const files = readdirSync(DIR).filter((f) => f.endsWith('.json'));
+const DIR = new URL('../../privado/editais/', import.meta.url);
+// Material privado (gitignored): sem ele (CI, clone novo) a suíte é pulada.
+const temPrivado = existsSync(DIR);
+const files = temPrivado ? readdirSync(DIR).filter((f) => f.endsWith('.json')) : [];
 
-describe('JSONs de edital em docs/editais', () => {
+describe.skipIf(!temPrivado)('JSONs de edital em privado/editais', () => {
   it('existe ao menos um edital', () => {
     expect(files.length).toBeGreaterThan(0);
   });
