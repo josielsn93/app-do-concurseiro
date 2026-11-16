@@ -1,0 +1,68 @@
+name: Radar de concursos
+
+# Roda toda segunda-feira (08:00 em Brasilia) nos servidores do GitHub, sem
+# depender de nenhum computador ligado. Coleta noticias de concursos, atualiza
+# radar.json na branch radar-data e envia o resumo da semana no Telegram.
+#
+# Secrets necessarios (Settings > Secrets and variables > Actions):
+#   TELEGRAM_BOT_TOKEN  token do bot criado no @BotFather
+#   TELEGRAM_CHAT_ID    id do chat que recebe as mensagens
+# Sem eles o radar ainda e gravado, mas nada e enviado.
+
+on:
+  schedule:
+    - cron: '0 11 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-concursos
+  cancel-in-progress: false
+
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Preparar branch radar-data
+        run: |
+          set -euo pipefail
+          git config user.name "radar-concursos[bot]"
+          git config user.email "radar-concursos@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin radar-data >/dev/null 2>&1; then
+            git fetch --depth=1 origin radar-data
+            git worktree add ../radar-data FETCH_HEAD
+          else
+            git worktree add --detach ../radar-data HEAD
+            git -C ../radar-data checkout --orphan radar-data
+            git -C ../radar-data rm -rf --quiet .
+          fi
+
+      - name: Coletar e enviar o radar
+        env:
+          RADAR_DATA_DIR: ${{ github.workspace }}/../radar-data
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node radar/run.mjs
+
+      - name: Publicar radar.json na branch radar-data
+        run: |
+          set -euo pipefail
+          cd ../radar-data
+          git add radar.json
+          if git diff --cached --quiet; then
+            echo "radar.json sem mudancas"
+          else
+            git commit -m "chore(radar): atualiza radar.json"
+            git push origin HEAD:radar-data
+          fi

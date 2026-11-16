@@ -260,3 +260,7 @@ Remova as flags com:
 localStorage.removeItem('debug:sync');
 localStorage.removeItem('debug:credentials');
 ```
+
+## Radar de concursos
+
+Coletor semanal com envio no Telegram, fora do app (`radar/`, workflow `radar-concursos.yml`). Veja `docs/radar-concursos.md`. Testes: `npx vitest run tests/unit/radar-*.test.js`.

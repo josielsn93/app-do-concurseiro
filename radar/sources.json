@@ -1,0 +1,68 @@
+{
+  "tracks": [
+    {
+      "id": "tjsp",
+      "label": "TJ-SP (Escrevente)",
+      "queries": [
+        "\"TJSP\" OR \"TJ-SP\" concurso",
+        "\"Tribunal de Justiça de São Paulo\" concurso escrevente"
+      ]
+    },
+    {
+      "id": "federal-sp",
+      "label": "Justiça Federal, Trabalhista e Eleitoral (SP)",
+      "queries": [
+        "\"TRF3\" concurso",
+        "\"TRT-2\" OR \"TRT 2\" concurso",
+        "\"TRT-15\" OR \"TRT 15\" concurso",
+        "\"TRE-SP\" concurso"
+      ]
+    },
+    {
+      "id": "tribunais-nacional",
+      "label": "Tribunais (nacional)",
+      "queries": [
+        "concurso \"técnico judiciário\" autorizado",
+        "concurso tribunais previsão edital"
+      ]
+    },
+    {
+      "id": "tjs-sul",
+      "label": "TJs do Sul (RS, SC, PR)",
+      "queries": [
+        "\"TJRS\" OR \"TJ-RS\" concurso",
+        "\"TJSC\" OR \"TJ-SC\" concurso",
+        "\"TJPR\" OR \"TJ-PR\" concurso"
+      ]
+    },
+    {
+      "id": "tjmg",
+      "label": "TJ-MG",
+      "queries": ["\"TJMG\" OR \"TJ-MG\" concurso"]
+    },
+    {
+      "id": "pmsp",
+      "label": "Prefeitura de São Paulo",
+      "queries": [
+        "\"Prefeitura de São Paulo\" concurso",
+        "concurso \"APPGG\" OR \"Assistente de Gestão de Políticas Públicas\" São Paulo"
+      ]
+    },
+    {
+      "id": "pcsp",
+      "label": "Polícia Civil de SP",
+      "queries": [
+        "\"Polícia Civil\" \"São Paulo\" concurso",
+        "concurso \"PC-SP\" escrivão investigador"
+      ]
+    },
+    {
+      "id": "educacao",
+      "label": "Educação (técnico-administrativo e secretarias)",
+      "queries": [
+        "concurso técnico administrativo em educação \"IFSP\" OR \"USP\" OR \"Unesp\" OR \"Unicamp\"",
+        "concurso \"Secretaria da Educação\" \"São Paulo\""
+      ]
+    }
+  ]
+}
