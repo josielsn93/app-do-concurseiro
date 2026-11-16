@@ -167,3 +167,41 @@ describe.skipIf(!temPrivado)('aulas aprofundadas (conteúdo de 1 hora) das seman
     }
   });
 });
+
+describe.skipIf(!temPrivado)('aulas aprofundadas de Direito Constitucional', () => {
+  const blocosDC = () =>
+    plano.dias.flatMap((d) =>
+      d.blocos
+        .filter((b) => b.disciplina === 'Direito Constitucional' && !/^Revisão/.test(b.notas) && !b.topicos.includes('Questões da banca Vunesp'))
+        .map((b) => ({ data: d.data, b }))
+    );
+
+  it('os 9 blocos de teoria de 1 hora são aulas completas', () => {
+    const lista = blocosDC();
+    expect(lista.length).toBe(9);
+    for (const { data, b } of lista) {
+      const n = b.notas;
+      expect(n.length, `${data} tamanho`).toBeGreaterThan(3500);
+      expect(n.length, `${data} limite do importador`).toBeLessThan(10000);
+      for (const secao of ['## 🎯 Objetivo', '## ⏱ Roteiro', '## 📖 Teoria', '## 🏦 Como a Vunesp cobra', '## ⚠️', '## ✍️ Exercícios', '## 📝 Para o caderno de erros']) {
+        expect(n, `${data} sem "${secao}"`).toContain(secao);
+      }
+      expect((n.match(/^::: Gabarito/gm) || []).length, `${data} gabaritos`).toBeGreaterThanOrEqual(4);
+    }
+  });
+
+  it('cada questão tem alternativas A a E e gabarito com letra válida', () => {
+    for (const { data, b } of blocosDC()) {
+      const questoes = b.notas.split(/\*\*Questão \d+\./).slice(1);
+      expect(questoes.length, data).toBeGreaterThanOrEqual(4);
+      for (const q of questoes) {
+        for (const letra of ['A', 'B', 'C', 'D', 'E']) expect(q, `${data}: falta (${letra})`).toContain(`- (${letra})`);
+        expect(q, data).toMatch(/\*\*Letra [A-E]\.\*\*/);
+      }
+    }
+  });
+
+  it('cada aula lembra de conferir o texto no site oficial (Planalto)', () => {
+    for (const { data, b } of blocosDC()) expect(b.notas, data).toMatch(/Planalto/);
+  });
+});
