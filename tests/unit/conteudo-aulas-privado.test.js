@@ -17,6 +17,8 @@ const ESPERADOS = {
   INF: ['INF-00-p1', 'INF-00-p2', 'INF-01', 'INF-02', 'INF-03', 'INF-04'],
   MAT: ['MAT-00', 'MAT-01', 'MAT-02', 'MAT-03', 'MAT-04', 'MAT-05', 'MAT-06', 'MAT-07', 'MAT-08'],
   MATB: ['MATB-01', 'MATB-02', 'MATB-03', 'MATB-04', 'MATB-05', 'MATB-06'],
+  RED: ['RED-00', 'RED-01', 'RED-02', 'RED-03', 'RED-04', 'RED-05'],
+  ATU: ['ATU-00-p1', 'ATU-00-p2', 'ATU-01'],
   DA: ['DA-00-p1', 'DA-00-p2', 'DA-00-p3', 'DA-00-p4', 'DA-01', 'DA-02-p1', 'DA-02-p2', 'DA-02-p3', 'DA-03-p1', 'DA-03-p2'],
 };
 
