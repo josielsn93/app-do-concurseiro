@@ -9,6 +9,7 @@ const load = (nome) => readFileSync(new URL(nome, dir), 'utf8');
 
 // Arquivos de aula esperados por sigla (um arquivo por hora de teoria).
 const ESPERADOS = {
+  PP: ['PP-00-p1', 'PP-00-p2', 'PP-00-p3', 'PP-01-p1', 'PP-01-p2', 'PP-02-p1', 'PP-02-p2', 'PP-02-p3', 'PP-02-p4', 'PP-02-p5', 'PP-02-p6', 'PP-03-p1', 'PP-03-p2', 'PP-04-p1', 'PP-04-p2', 'PP-04-p3', 'PP-04-p4', 'PP-05-p1', 'PP-05-p2', 'PP-05-p3'],
   DA: ['DA-00-p1', 'DA-00-p2', 'DA-00-p3', 'DA-00-p4', 'DA-01', 'DA-02-p1', 'DA-02-p2', 'DA-02-p3', 'DA-03-p1', 'DA-03-p2'],
 };
 
