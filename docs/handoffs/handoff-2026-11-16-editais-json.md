@@ -64,3 +64,4 @@
 - Teste de conteúdo estendido para LI parcial (LI-00 e LI-02, 6 arquivos): 78 testes passando. Slots de 120 min de LI-0 e LI-2 divididos no gerador. LI-1, LI-3 e LI-4 pendentes (dependem de textos-fonte). Nenhum JSON regenerado.
 - PENDENTE (técnico): faltam 13 arquivos de conteúdo de LI (LI-01, LI-03, LI-04), aguardando textos-fonte do usuário; ao receber, estender o teste de conteúdo, escrever os arquivos e dividir os slots de 120 min restantes no gerador.
 - Radar: adicionado envio opcional de lembrete avulso (variável de repositório `RADAR_LEMBRETE`, mensagem separada após o resumo; 3 testes novos em `radar-run.test.js`; workflow repassa `vars.RADAR_LEMBRETE`). A variável precisa ser criada/apagada no GitHub; o texto não é versionado.
+- Teste de conteúdo estendido para RL (4 arquivos): 82 testes passando. Slots de 120 min de RL divididos no gerador (sem regenerar JSON). Restam INF, MAT, ATU, RED e as pendências de LI.
