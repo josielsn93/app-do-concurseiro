@@ -11,6 +11,7 @@ const load = (nome) => readFileSync(new URL(nome, dir), 'utf8');
 const ESPERADOS = {
   PP: ['PP-00-p1', 'PP-00-p2', 'PP-00-p3', 'PP-01-p1', 'PP-01-p2', 'PP-02-p1', 'PP-02-p2', 'PP-02-p3', 'PP-02-p4', 'PP-02-p5', 'PP-02-p6', 'PP-03-p1', 'PP-03-p2', 'PP-04-p1', 'PP-04-p2', 'PP-04-p3', 'PP-04-p4', 'PP-05-p1', 'PP-05-p2', 'PP-05-p3'],
   PC: ['PC-00-p1', 'PC-00-p2', 'PC-01-p1', 'PC-01-p2', 'PC-01-p3', 'PC-01-p4', 'PC-01-p5', 'PC-01-p6', 'PC-01-p7', 'PC-02-p1', 'PC-02-p2', 'PC-02-p3', 'PC-02-p4', 'PC-03-p1', 'PC-03-p2', 'PC-03-p3', 'PC-03-p4', 'PC-03-p5', 'PC-03-p6', 'PC-03-p7', 'PC-03-p8', 'PC-03-p9', 'PC-03-p10', 'PC-03-p11', 'PC-04-p1', 'PC-04-p2', 'PC-04-p3', 'PC-04-p4', 'PC-05', 'PC-06-p1', 'PC-06-p2'],
+  DP: ['DP-00-p1', 'DP-00-p2', 'DP-00-p3', 'DP-00-p4', 'DP-01-p1', 'DP-01-p2', 'DP-01-p3', 'DP-02-p1', 'DP-02-p2', 'DP-02-p3', 'DP-02-p4'],
   DA: ['DA-00-p1', 'DA-00-p2', 'DA-00-p3', 'DA-00-p4', 'DA-01', 'DA-02-p1', 'DA-02-p2', 'DA-02-p3', 'DA-03-p1', 'DA-03-p2'],
 };
 
