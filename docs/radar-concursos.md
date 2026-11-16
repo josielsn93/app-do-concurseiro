@@ -39,3 +39,7 @@ Edite `radar/sources.json`: cada trilha tem `id`, `label` e `queries` (sintaxe d
 ## Testes
 
 `tests/unit/radar-*.test.js` (rss, classify, merge, message, telegram, run). Usam fixtures e fetch simulado; nenhuma chamada de rede.
+
+## Lembrete avulso (opcional)
+
+Se existir a **variável do repositório** `RADAR_LEMBRETE` (Settings > Secrets and variables > Actions > Variables), o radar envia o texto dela como **mensagem separada**, logo depois do resumo semanal. Para parar os lembretes, apague a variável. O texto fica no GitHub e não no código versionado.

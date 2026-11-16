@@ -195,3 +195,49 @@ describe('runRadar', () => {
     expect(JSON.parse(alert[1].body).text).toMatch(/falh/i);
   });
 });
+
+describe('runRadar: lembrete avulso', () => {
+  const emptyFeed = async (url) => (isTelegram(url) ? telegramOk : xmlResponse(feed([])));
+  const telegramBodies = (fetchImpl) =>
+    fetchImpl.mock.calls.filter(([u]) => isTelegram(u)).map(([, init]) => JSON.parse(init.body).text);
+
+  it('envia o lembrete como mensagem separada, depois do resumo', async () => {
+    const fetchImpl = vi.fn(emptyFeed);
+    const summary = await runRadar({
+      sources: SOURCES,
+      fetchImpl,
+      dataDir: dir,
+      now: NOW,
+      env: { TELEGRAM_BOT_TOKEN: 't', TELEGRAM_CHAT_ID: '9', RADAR_LEMBRETE: 'Enviar os textos pendentes <agora>' },
+      log: vi.fn(),
+    });
+    const bodies = telegramBodies(fetchImpl);
+    const last = bodies[bodies.length - 1];
+    expect(bodies.length).toBeGreaterThan(1);
+    expect(last).toContain('Lembrete');
+    expect(last).toContain('Enviar os textos pendentes &lt;agora&gt;');
+    expect(bodies.slice(0, -1).some((b) => b.includes('Lembrete'))).toBe(false);
+    expect(summary.telegramSent).toBe(bodies.length);
+  });
+
+  it('não envia lembrete quando a variável está ausente ou vazia', async () => {
+    for (const lembrete of [undefined, '', '   ']) {
+      const fetchImpl = vi.fn(emptyFeed);
+      await runRadar({
+        sources: SOURCES,
+        fetchImpl,
+        dataDir: dir,
+        now: NOW,
+        env: { TELEGRAM_BOT_TOKEN: 't', TELEGRAM_CHAT_ID: '9', RADAR_LEMBRETE: lembrete },
+        log: vi.fn(),
+      });
+      expect(telegramBodies(fetchImpl).some((b) => b.includes('Lembrete'))).toBe(false);
+    }
+  });
+
+  it('não tenta enviar lembrete sem Telegram configurado', async () => {
+    const fetchImpl = vi.fn(emptyFeed);
+    await runRadar({ sources: SOURCES, fetchImpl, dataDir: dir, now: NOW, env: { RADAR_LEMBRETE: 'x' }, log: vi.fn() });
+    expect(telegramBodies(fetchImpl)).toEqual([]);
+  });
+});

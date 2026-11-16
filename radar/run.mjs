@@ -5,7 +5,7 @@ import { parseRss } from './lib/rss.js';
 import { STAGE_RANK, classify } from './lib/classify.js';
 import { isTrusted } from './lib/trust.js';
 import { mergeRadar } from './lib/merge.js';
-import { buildDigest } from './lib/message.js';
+import { buildDigest, escapeHtml } from './lib/message.js';
 import { sendTelegram } from './lib/telegram.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -108,6 +108,16 @@ export async function runRadar({
   if (canSend) {
     const texts = buildDigest({ tracks: sources.tracks, added, now });
     telegramSent = await sendTelegram({ token, chatId, texts, fetchImpl });
+    // Lembrete avulso: vem de variável do repositório (fora do código) e vai em mensagem separada.
+    const lembrete = (env.RADAR_LEMBRETE ?? '').trim();
+    if (lembrete) {
+      telegramSent += await sendTelegram({
+        token,
+        chatId,
+        texts: [`📌 <b>Lembrete</b>\n${escapeHtml(lembrete)}`],
+        fetchImpl,
+      });
+    }
   } else {
     log('Telegram não configurado (TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID); resumo não enviado.');
   }

@@ -8,6 +8,10 @@ name: Radar de concursos
 #   TELEGRAM_BOT_TOKEN  token do bot criado no @BotFather
 #   TELEGRAM_CHAT_ID    id do chat que recebe as mensagens
 # Sem eles o radar ainda e gravado, mas nada e enviado.
+#
+# Variavel opcional (Settings > Secrets and variables > Actions > Variables):
+#   RADAR_LEMBRETE      texto de um lembrete enviado em mensagem separada, apos o
+#                       resumo. Apague a variavel para parar de enviar.
 
 on:
   schedule:
@@ -53,6 +57,7 @@ jobs:
           RADAR_DATA_DIR: ${{ github.workspace }}/../radar-data
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RADAR_LEMBRETE: ${{ vars.RADAR_LEMBRETE }}
         run: node radar/run.mjs
 
       - name: Publicar radar.json na branch radar-data
