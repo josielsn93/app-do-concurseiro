@@ -20,6 +20,72 @@ describe.skipIf(!temPrivado)('plano de estudos TJ-SP Escrevente (cronograma dia 
     expect(plano.dias.at(-1).data).toBe('2027-03-14');
   });
 
+  it('só tem dias úteis (seg a sex), exceto o dia da prova', () => {
+    for (const { data } of plano.dias) {
+      if (data === '2027-03-14') continue;
+      const dow = new Date(`${data}T12:00:00Z`).getUTCDay();
+      expect(dow, data).toBeGreaterThanOrEqual(1);
+      expect(dow, data).toBeLessThanOrEqual(5);
+    }
+  });
+
+  it('revisões 24h / 7d / 30d ancoradas na data em que cada assunto foi estudado', () => {
+    const add = (iso, n) => new Date(new Date(`${iso}T12:00:00Z`).getTime() + n * 86400000).toISOString().slice(0, 10);
+    const ultima = plano.dias.at(-1).data;
+    const porTopico = new Map(); // chave -> { primeira data de teoria, revisões }
+    for (const dia of plano.dias) {
+      for (const b of dia.blocos) {
+        const n = b.notas || '';
+        const chave = `${normalizeNameKey(b.disciplina)}|${normalizeNameKey(b.topicos[0])}`;
+        const rev = /^Revisão de (1 dia|7 dias|30 dias)/.exec(n);
+        const e = porTopico.get(chave) || { teoria: null, r: {} };
+        if (rev) e.r[rev[1]] = e.r[rev[1]] || dia.data;
+        else if (!/Revisão ativa|simulado|caderno/i.test(n.slice(0, 40)) && b.disciplina !== 'Simulados e Revisão' && !/Questões da banca/.test(b.topicos[0])) e.teoria = dia.data;
+        porTopico.set(chave, e);
+      }
+    }
+    let checados = 0;
+    for (const [chave, e] of porTopico) {
+      if (!e.teoria || chave.startsWith('redacao')) continue;
+      const d1 = add(e.teoria, 1), d7 = add(e.teoria, 7), d30 = add(e.teoria, 30);
+      if (d1 <= ultima) { expect(e.r['1 dia'], `${chave} R1`).toBeDefined(); expect(e.r['1 dia'] >= d1 && e.r['1 dia'] <= add(e.teoria, 5), `${chave} R1 fora da janela`).toBe(true); }
+      if (d7 <= ultima && add(e.teoria, 11) < ultima) { expect(e.r['7 dias'], `${chave} R7`).toBeDefined(); expect(e.r['7 dias'] >= add(e.teoria, 5) && e.r['7 dias'] <= add(e.teoria, 11), `${chave} R7 fora da janela`).toBe(true); }
+      if (add(e.teoria, 35) < ultima) { expect(e.r['30 dias'], `${chave} R30`).toBeDefined(); expect(e.r['30 dias'] >= add(e.teoria, 28) && e.r['30 dias'] <= add(e.teoria, 35), `${chave} R30 fora da janela`).toBe(true); }
+      checados++;
+    }
+    expect(checados).toBeGreaterThan(30);
+  });
+
+  it('bloco de questões do dia tem meta numérica e pede registro de acertos', () => {
+    const qs = plano.dias.flatMap((d) => d.blocos.filter((b) => b.topicos.includes('Questões da banca Vunesp')));
+    expect(qs.length).toBeGreaterThan(20);
+    for (const b of qs) {
+      expect(b.notas).toMatch(/Meta:/);
+      expect(b.notas).toMatch(/acertos/i);
+    }
+  });
+
+  it('semana 1 tem mini-diagnóstico com questões reais da Vunesp', () => {
+    const sem1 = plano.dias.filter((d) => d.data <= '2026-11-20');
+    expect(sem1.some((d) => d.blocos.some((b) => b.topicos.includes('Diagnóstico — prova anterior Vunesp')))).toBe(true);
+  });
+
+  it('Legislação Interna manda conferir a versão vigente da norma', () => {
+    const li = plano.dias.flatMap((d) => d.blocos.filter((b) => b.disciplina.startsWith('Legislação Interna') && !/^Revisão/.test(b.notas) && !b.topicos.includes('Questões da banca Vunesp')));
+    expect(li.length).toBeGreaterThan(3);
+    for (const b of li) expect(b.notas).toMatch(/versão vigente/i);
+  });
+
+  it('Matemática, Raciocínio Lógico e Informática são práticas (fazer, não só ler)', () => {
+    for (const dia of plano.dias) {
+      for (const b of dia.blocos) {
+        if (/^(Matemática|Raciocínio|Informática)/.test(b.disciplina) && !/^Revisão|Questões/.test(b.notas) && !b.topicos.some((t) => /Questões da banca|Simulado|Revisão/.test(t))) {
+          expect(b.notas, `${dia.data} ${b.disciplina}`).toMatch(/Pratique|Faça/);
+        }
+      }
+    }
+  });
+
   it('todo bloco usa disciplina e tópicos que existem no edital importado', () => {
     const discs = new Map(
       edital.disciplinas.map((d) => [normalizeNameKey(d.nome), new Set(d.topicos.map((t) => normalizeNameKey(t.nome)))])
@@ -65,7 +131,7 @@ describe.skipIf(!temPrivado)('plano de estudos TJ-SP Escrevente (cronograma dia 
   it('tem os quatro simulados, a prova TRF3 e revisão de erros', () => {
     const topicos = plano.dias.flatMap((d) => d.blocos.flatMap((b) => b.topicos));
     for (const n of [1, 2, 3, 4]) expect(topicos.some((t) => t.startsWith(`Simulado ${n}`))).toBe(true);
-    expect(topicos.some((t) => t.includes('TRF3'))).toBe(true);
+    expect(topicos.some((t) => t.includes('TRF3'))).toBe(true); // lembrete opcional (prova é domingo)
     expect(topicos.some((t) => t.startsWith('Revisão de erros'))).toBe(true);
   });
 });
@@ -75,7 +141,7 @@ describe.skipIf(!temPrivado)('aulas aprofundadas (conteúdo de 1 hora) das seman
 
   it.each(diasComAula)('%s: o bloco de teoria é uma aula completa', async (data) => {
     const { renderLessonNotes } = await import('../../src/js/ui/event-detail-view.js');
-    const bloco = plano.dias.find((d) => d.data === data).blocos[0];
+    const bloco = plano.dias.find((d) => d.data === data).blocos.find((b) => (b.notas || '').startsWith('## 🎯'));
     const n = bloco.notas;
     expect(n.length).toBeGreaterThan(3500);
     expect(n.length).toBeLessThan(10000);
@@ -92,7 +158,7 @@ describe.skipIf(!temPrivado)('aulas aprofundadas (conteúdo de 1 hora) das seman
 
   it('cada questão tem alternativas A a E e a letra do gabarito é uma delas', () => {
     for (const data of diasComAula) {
-      const n = plano.dias.find((d) => d.data === data).blocos[0].notas;
+      const n = plano.dias.find((d) => d.data === data).blocos.find((b) => (b.notas || '').startsWith('## 🎯')).notas;
       const questoes = n.split(/\*\*Questão \d+\./).slice(1);
       for (const q of questoes) {
         for (const letra of ['A', 'B', 'C', 'D', 'E']) expect(q, `${data}: falta (${letra})`).toContain(`- (${letra})`);

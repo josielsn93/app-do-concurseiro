@@ -49,3 +49,6 @@
 
 ## Privacidade (16/11/2026)
 - Estratégia, conteúdo de aula, planos e editais verticalizados agora ficam em `privado/` (gitignored). Teste `tests/unit/privacy-estrategia.test.js` impede versionar. Quem for continuar: ler `privado/estrategia/CEREBRO.md` (local, não vai ao GitHub) antes de criar plano/aula e atualizar o Registro de revisões. Se o arquivo não existir na sua máquina, peça ao Josi.
+
+## Atualização técnica (16/11/2026, tarde)
+- Gerador do plano (em `privado/`) agora produz só dias úteis; revisões 24h/7d/30d por assunto; testes em `tests/unit/plano-tjsp-json.test.js` (pulados se `privado/` não existir). Regenerar: `python3 -I privado/plano-tjsp/gen_plano.py`.
