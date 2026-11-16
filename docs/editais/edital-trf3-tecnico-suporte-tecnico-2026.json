@@ -8,168 +8,621 @@
     {
       "nome": "Língua Portuguesa e Raciocínio Analítico",
       "topicos": [
-        { "nome": "Redação Oficial" },
-        { "nome": "Ortografia e acentuação" },
-        { "nome": "Emprego do sinal indicativo de crase" },
-        { "nome": "Compreensão e interpretação de textos de gêneros variados; relação do texto com seu contexto histórico" },
-        { "nome": "Denotação e conotação; figuras de linguagem" },
-        { "nome": "Discurso direto, indireto e indireto livre; intertextualidade" },
-        { "nome": "Morfossintaxe; elementos estruturais e processos de formação de palavras" },
-        { "nome": "Sinonímia e antonímia" },
-        { "nome": "Pontuação" },
-        { "nome": "Pronomes" },
-        { "nome": "Concordância nominal e verbal" },
-        { "nome": "Flexão nominal e verbal; vozes do verbo; correlação de tempos e modos verbais" },
-        { "nome": "Regência nominal e verbal" },
-        { "nome": "Coordenação e subordinação; conectivos" },
-        { "nome": "Coesão e coerência" },
-        { "nome": "Reescrita: frases corretas e incorretas, reorganização de orações e períodos, equivalência e transformação de estruturas" },
-        { "nome": "Raciocínio analítico e argumentação: senso crítico, argumentos falaciosos e apelativos, comunicação eficiente de argumentos" }
+        {
+          "nome": "Redação Oficial"
+        },
+        {
+          "nome": "Ortografia e acentuação"
+        },
+        {
+          "nome": "Emprego do sinal indicativo de crase"
+        },
+        {
+          "nome": "Compreensão e interpretação de textos de gêneros variados; relação do texto com seu contexto histórico"
+        },
+        {
+          "nome": "Denotação e conotação; figuras de linguagem"
+        },
+        {
+          "nome": "Discurso direto, indireto e indireto livre; intertextualidade"
+        },
+        {
+          "nome": "Morfossintaxe; elementos estruturais e processos de formação de palavras"
+        },
+        {
+          "nome": "Sinonímia e antonímia"
+        },
+        {
+          "nome": "Pontuação"
+        },
+        {
+          "nome": "Pronomes"
+        },
+        {
+          "nome": "Concordância nominal e verbal"
+        },
+        {
+          "nome": "Flexão nominal e verbal; vozes do verbo; correlação de tempos e modos verbais"
+        },
+        {
+          "nome": "Regência nominal e verbal"
+        },
+        {
+          "nome": "Coordenação e subordinação; conectivos"
+        },
+        {
+          "nome": "Coesão e coerência"
+        },
+        {
+          "nome": "Reescrita: frases corretas e incorretas, reorganização de orações e períodos, equivalência e transformação de estruturas"
+        },
+        {
+          "nome": "Raciocínio analítico e argumentação: senso crítico, argumentos falaciosos e apelativos, comunicação eficiente de argumentos"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Redação Oficial"
+        },
+        {
+          "nome": "Ortografia e acentuação"
+        },
+        {
+          "nome": "Emprego do sinal indicativo de crase"
+        },
+        {
+          "nome": "Compreensão e interpretação de textos de gêneros variados; relação do texto com seu contexto histórico"
+        },
+        {
+          "nome": "Denotação e conotação; figuras de linguagem"
+        },
+        {
+          "nome": "Discurso direto, indireto e indireto livre; intertextualidade"
+        },
+        {
+          "nome": "Morfossintaxe; elementos estruturais e processos de formação de palavras"
+        },
+        {
+          "nome": "Sinonímia e antonímia"
+        },
+        {
+          "nome": "Pontuação"
+        },
+        {
+          "nome": "Pronomes"
+        },
+        {
+          "nome": "Concordância nominal e verbal"
+        },
+        {
+          "nome": "Flexão nominal e verbal; vozes do verbo; correlação de tempos e modos verbais"
+        },
+        {
+          "nome": "Regência nominal e verbal"
+        },
+        {
+          "nome": "Coordenação e subordinação; conectivos"
+        },
+        {
+          "nome": "Coesão e coerência"
+        },
+        {
+          "nome": "Reescrita: frases corretas e incorretas, reorganização de orações e períodos, equivalência e transformação de estruturas"
+        },
+        {
+          "nome": "Raciocínio analítico e argumentação: senso crítico, argumentos falaciosos e apelativos, comunicação eficiente de argumentos"
+        }
+      ]
     },
     {
       "nome": "Raciocínio Lógico-Matemático",
       "topicos": [
-        { "nome": "Estrutura lógica de relações entre pessoas, lugares, objetos ou eventos fictícios; dedução de novas informações" },
-        { "nome": "Raciocínio verbal, matemático e sequencial" },
-        { "nome": "Orientação espacial e temporal; formação de conceitos; discriminação de elementos" },
-        { "nome": "Processo lógico: de hipóteses a conclusões válidas" },
-        { "nome": "Proporcionalidade, regra de três simples e porcentagem (acréscimos e descontos)" }
+        {
+          "nome": "Estrutura lógica de relações entre pessoas, lugares, objetos ou eventos fictícios; dedução de novas informações"
+        },
+        {
+          "nome": "Raciocínio verbal, matemático e sequencial"
+        },
+        {
+          "nome": "Orientação espacial e temporal; formação de conceitos; discriminação de elementos"
+        },
+        {
+          "nome": "Processo lógico: de hipóteses a conclusões válidas"
+        },
+        {
+          "nome": "Proporcionalidade, regra de três simples e porcentagem (acréscimos e descontos)"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Estrutura lógica de relações entre pessoas, lugares, objetos ou eventos fictícios; dedução de novas informações"
+        },
+        {
+          "nome": "Raciocínio verbal, matemático e sequencial"
+        },
+        {
+          "nome": "Orientação espacial e temporal; formação de conceitos; discriminação de elementos"
+        },
+        {
+          "nome": "Processo lógico: de hipóteses a conclusões válidas"
+        },
+        {
+          "nome": "Proporcionalidade, regra de três simples e porcentagem (acréscimos e descontos)"
+        }
+      ]
     },
     {
       "nome": "Ética no Serviço Público e Integridade",
       "topicos": [
-        { "nome": "Ética e integridade: conceito, princípios e valores; ética, moral, democracia e cidadania; ética no contexto público" },
-        { "nome": "Regime Disciplinar Federal — Lei 8.112/1990 (deveres, proibições, acumulação, responsabilidades, penalidades)" },
-        { "nome": "Improbidade administrativa — Lei 8.429/1992 com as alterações da Lei 14.230/2021" },
-        { "nome": "Lei Anticorrupção — Lei 12.846/2013" },
-        { "nome": "Processo administrativo — Lei 9.784/1999" },
-        { "nome": "Integridade na Justiça Federal da 3ª Região: Código de Conduta da JF (Res. CJF 147/2011), Comitê Gestor (Portaria CNJ 116/2012 e Portaria PRES 4.657/2026)" },
-        { "nome": "Sistemas de Integridade do Poder Judiciário (Res. CNJ 410/2021) e Governança Colaborativa na JF3R (Res. PRES 426/2021)" },
-        { "nome": "Prevenção e enfrentamento do assédio e da discriminação (Res. CNJ 351/2020) e comissões locais" },
-        { "nome": "Lei Geral de Proteção de Dados — Lei 13.709/2018" },
-        { "nome": "Lei de Acesso à Informação — Lei 12.527/2011" }
+        {
+          "nome": "Ética e integridade: conceito, princípios e valores; ética, moral, democracia e cidadania; ética no contexto público"
+        },
+        {
+          "nome": "Regime Disciplinar Federal — Lei 8.112/1990 (deveres, proibições, acumulação, responsabilidades, penalidades)"
+        },
+        {
+          "nome": "Improbidade administrativa — Lei 8.429/1992 com as alterações da Lei 14.230/2021"
+        },
+        {
+          "nome": "Lei Anticorrupção — Lei 12.846/2013"
+        },
+        {
+          "nome": "Processo administrativo — Lei 9.784/1999"
+        },
+        {
+          "nome": "Integridade na Justiça Federal da 3ª Região: Código de Conduta da JF (Res. CJF 147/2011), Comitê Gestor (Portaria CNJ 116/2012 e Portaria PRES 4.657/2026)"
+        },
+        {
+          "nome": "Sistemas de Integridade do Poder Judiciário (Res. CNJ 410/2021) e Governança Colaborativa na JF3R (Res. PRES 426/2021)"
+        },
+        {
+          "nome": "Prevenção e enfrentamento do assédio e da discriminação (Res. CNJ 351/2020) e comissões locais"
+        },
+        {
+          "nome": "Lei Geral de Proteção de Dados — Lei 13.709/2018"
+        },
+        {
+          "nome": "Lei de Acesso à Informação — Lei 12.527/2011"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Ética e integridade: conceito, princípios e valores; ética, moral, democracia e cidadania; ética no contexto público"
+        },
+        {
+          "nome": "Regime Disciplinar Federal — Lei 8.112/1990 (deveres, proibições, acumulação, responsabilidades, penalidades)"
+        },
+        {
+          "nome": "Improbidade administrativa — Lei 8.429/1992 com as alterações da Lei 14.230/2021"
+        },
+        {
+          "nome": "Lei Anticorrupção — Lei 12.846/2013"
+        },
+        {
+          "nome": "Processo administrativo — Lei 9.784/1999"
+        },
+        {
+          "nome": "Integridade na Justiça Federal da 3ª Região: Código de Conduta da JF (Res. CJF 147/2011), Comitê Gestor (Portaria CNJ 116/2012 e Portaria PRES 4.657/2026)"
+        },
+        {
+          "nome": "Sistemas de Integridade do Poder Judiciário (Res. CNJ 410/2021) e Governança Colaborativa na JF3R (Res. PRES 426/2021)"
+        },
+        {
+          "nome": "Prevenção e enfrentamento do assédio e da discriminação (Res. CNJ 351/2020) e comissões locais"
+        },
+        {
+          "nome": "Lei Geral de Proteção de Dados — Lei 13.709/2018"
+        },
+        {
+          "nome": "Lei de Acesso à Informação — Lei 12.527/2011"
+        }
+      ]
     },
     {
       "nome": "Direitos Humanos, Fundamentais e Acessibilidade",
       "topicos": [
-        { "nome": "Teoria geral dos direitos fundamentais; Direitos Humanos e Direitos Fundamentais" },
-        { "nome": "Declaração Universal dos Direitos Humanos; Agenda 2030 da ONU" },
-        { "nome": "Convenção sobre os Direitos das Pessoas com Deficiência (Decreto 6.949/2009) e Res. CNJ 401/2021" },
-        { "nome": "Inclusão e garantias das pessoas com deficiência (Lei 13.146/2015; Lei 11.126/2005; Constituição Federal)" },
-        { "nome": "Acessibilidade: Leis 10.098/2000, 10.048/2000 e 7.853/1989; Decreto 5.296/2004" },
-        { "nome": "Prioridade de atendimento (Leis 10.048/2000 e 14.364/2022; Decreto 5.296/2004)" },
-        { "nome": "Apoio e integração social das pessoas com deficiência (Lei 7.853/1989 e Decreto 3.298/1999)" }
+        {
+          "nome": "Teoria geral dos direitos fundamentais; Direitos Humanos e Direitos Fundamentais"
+        },
+        {
+          "nome": "Declaração Universal dos Direitos Humanos; Agenda 2030 da ONU"
+        },
+        {
+          "nome": "Convenção sobre os Direitos das Pessoas com Deficiência (Decreto 6.949/2009) e Res. CNJ 401/2021"
+        },
+        {
+          "nome": "Inclusão e garantias das pessoas com deficiência (Lei 13.146/2015; Lei 11.126/2005; Constituição Federal)"
+        },
+        {
+          "nome": "Acessibilidade: Leis 10.098/2000, 10.048/2000 e 7.853/1989; Decreto 5.296/2004"
+        },
+        {
+          "nome": "Prioridade de atendimento (Leis 10.048/2000 e 14.364/2022; Decreto 5.296/2004)"
+        },
+        {
+          "nome": "Apoio e integração social das pessoas com deficiência (Lei 7.853/1989 e Decreto 3.298/1999)"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Teoria geral dos direitos fundamentais; Direitos Humanos e Direitos Fundamentais"
+        },
+        {
+          "nome": "Declaração Universal dos Direitos Humanos; Agenda 2030 da ONU"
+        },
+        {
+          "nome": "Convenção sobre os Direitos das Pessoas com Deficiência (Decreto 6.949/2009) e Res. CNJ 401/2021"
+        },
+        {
+          "nome": "Inclusão e garantias das pessoas com deficiência (Lei 13.146/2015; Lei 11.126/2005; Constituição Federal)"
+        },
+        {
+          "nome": "Acessibilidade: Leis 10.098/2000, 10.048/2000 e 7.853/1989; Decreto 5.296/2004"
+        },
+        {
+          "nome": "Prioridade de atendimento (Leis 10.048/2000 e 14.364/2022; Decreto 5.296/2004)"
+        },
+        {
+          "nome": "Apoio e integração social das pessoas com deficiência (Lei 7.853/1989 e Decreto 3.298/1999)"
+        }
+      ]
     },
     {
       "nome": "Sustentabilidade e Meio Ambiente",
       "topicos": [
-        { "nome": "Desenvolvimento sustentável na CF/88; Objetivos de Desenvolvimento Sustentável (ONU)" },
-        { "nome": "Contratações sustentáveis na Lei 14.133/2021" },
-        { "nome": "Política Nacional sobre Mudança do Clima (Lei 12.187/2009)" },
-        { "nome": "Res. CNJ 433/2021 (Política do Poder Judiciário para o Clima e Meio Ambiente)" },
-        { "nome": "Res. CJF 709/2021 (Política de Sustentabilidade da Justiça Federal)" }
+        {
+          "nome": "Desenvolvimento sustentável na CF/88; Objetivos de Desenvolvimento Sustentável (ONU)"
+        },
+        {
+          "nome": "Contratações sustentáveis na Lei 14.133/2021"
+        },
+        {
+          "nome": "Política Nacional sobre Mudança do Clima (Lei 12.187/2009)"
+        },
+        {
+          "nome": "Res. CNJ 433/2021 (Política do Poder Judiciário para o Clima e Meio Ambiente)"
+        },
+        {
+          "nome": "Res. CJF 709/2021 (Política de Sustentabilidade da Justiça Federal)"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Desenvolvimento sustentável na CF/88; Objetivos de Desenvolvimento Sustentável (ONU)"
+        },
+        {
+          "nome": "Contratações sustentáveis na Lei 14.133/2021"
+        },
+        {
+          "nome": "Política Nacional sobre Mudança do Clima (Lei 12.187/2009)"
+        },
+        {
+          "nome": "Res. CNJ 433/2021 (Política do Poder Judiciário para o Clima e Meio Ambiente)"
+        },
+        {
+          "nome": "Res. CJF 709/2021 (Política de Sustentabilidade da Justiça Federal)"
+        }
+      ]
     },
     {
       "nome": "Hardware e Arquitetura de Computadores",
       "topicos": [
-        { "nome": "Organização de computadores: placa-mãe, processadores multi-core, memórias (RAM, cache, ROM) e barramentos" },
-        { "nome": "Armazenamento: HDs (SATA/SAS) e SSDs (SATA/NVMe M.2); conceitos básicos de RAID" },
-        { "nome": "Periféricos: impressoras laser e jato de tinta (configuração e filas), monitores, scanners e headsets" },
-        { "nome": "Dispositivos móveis (iOS e Android) e noções de gerenciamento com Microsoft Intune" },
-        { "nome": "Diagnóstico de falhas e substituição física de componentes" }
+        {
+          "nome": "Organização de computadores: placa-mãe, processadores multi-core, memórias (RAM, cache, ROM) e barramentos"
+        },
+        {
+          "nome": "Armazenamento: HDs (SATA/SAS) e SSDs (SATA/NVMe M.2); conceitos básicos de RAID"
+        },
+        {
+          "nome": "Periféricos: impressoras laser e jato de tinta (configuração e filas), monitores, scanners e headsets"
+        },
+        {
+          "nome": "Dispositivos móveis (iOS e Android) e noções de gerenciamento com Microsoft Intune"
+        },
+        {
+          "nome": "Diagnóstico de falhas e substituição física de componentes"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Organização de computadores: placa-mãe, processadores multi-core, memórias (RAM, cache, ROM) e barramentos"
+        },
+        {
+          "nome": "Armazenamento: HDs (SATA/SAS) e SSDs (SATA/NVMe M.2); conceitos básicos de RAID"
+        },
+        {
+          "nome": "Periféricos: impressoras laser e jato de tinta (configuração e filas), monitores, scanners e headsets"
+        },
+        {
+          "nome": "Dispositivos móveis (iOS e Android) e noções de gerenciamento com Microsoft Intune"
+        },
+        {
+          "nome": "Diagnóstico de falhas e substituição física de componentes"
+        }
+      ]
     },
     {
       "nome": "Sistemas Operacionais e Administração Local",
       "topicos": [
-        { "nome": "Windows 10 e 11: instalação, usuários locais, registros de eventos, UAC e Windows Update" },
-        { "nome": "Windows Server: Server Manager e serviços básicos de DNS e DHCP" },
-        { "nome": "Active Directory: criação de usuários, reset de senhas, ingresso no domínio e validação de GPOs" },
-        { "nome": "Linux (Ubuntu/Debian): comandos de terminal, arquivos, criação de usuários e instalação de pacotes (apt)" },
-        { "nome": "Instalação de drivers de dispositivos" },
-        { "nome": "Virtualização de desktops via Remote Desktop Services (RDS)" }
+        {
+          "nome": "Windows 10 e 11: instalação, usuários locais, registros de eventos, UAC e Windows Update"
+        },
+        {
+          "nome": "Windows Server: Server Manager e serviços básicos de DNS e DHCP"
+        },
+        {
+          "nome": "Active Directory: criação de usuários, reset de senhas, ingresso no domínio e validação de GPOs"
+        },
+        {
+          "nome": "Linux (Ubuntu/Debian): comandos de terminal, arquivos, criação de usuários e instalação de pacotes (apt)"
+        },
+        {
+          "nome": "Instalação de drivers de dispositivos"
+        },
+        {
+          "nome": "Virtualização de desktops via Remote Desktop Services (RDS)"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Windows 10 e 11: instalação, usuários locais, registros de eventos, UAC e Windows Update"
+        },
+        {
+          "nome": "Windows Server: Server Manager e serviços básicos de DNS e DHCP"
+        },
+        {
+          "nome": "Active Directory: criação de usuários, reset de senhas, ingresso no domínio e validação de GPOs"
+        },
+        {
+          "nome": "Linux (Ubuntu/Debian): comandos de terminal, arquivos, criação de usuários e instalação de pacotes (apt)"
+        },
+        {
+          "nome": "Instalação de drivers de dispositivos"
+        },
+        {
+          "nome": "Virtualização de desktops via Remote Desktop Services (RDS)"
+        }
+      ]
     },
     {
       "nome": "Ferramentas de Produtividade e Colaboração",
       "topicos": [
-        { "nome": "Microsoft 365: Word, Excel, PowerPoint e Outlook (configuração e resolução de problemas)" },
-        { "nome": "Microsoft Teams: canais, reuniões e integração com SharePoint e OneDrive" },
-        { "nome": "Sincronização e permissões no OneDrive e SharePoint" },
-        { "nome": "Navegadores (Edge e Chrome): cache, extensões, proxy e certificados de segurança" },
-        { "nome": "Certificação digital: tokens e smart cards ICP-Brasil" },
-        { "nome": "Suporte a ferramentas de videoconferência" }
+        {
+          "nome": "Microsoft 365: Word, Excel, PowerPoint e Outlook (configuração e resolução de problemas)"
+        },
+        {
+          "nome": "Microsoft Teams: canais, reuniões e integração com SharePoint e OneDrive"
+        },
+        {
+          "nome": "Sincronização e permissões no OneDrive e SharePoint"
+        },
+        {
+          "nome": "Navegadores (Edge e Chrome): cache, extensões, proxy e certificados de segurança"
+        },
+        {
+          "nome": "Certificação digital: tokens e smart cards ICP-Brasil"
+        },
+        {
+          "nome": "Suporte a ferramentas de videoconferência"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Microsoft 365: Word, Excel, PowerPoint e Outlook (configuração e resolução de problemas)"
+        },
+        {
+          "nome": "Microsoft Teams: canais, reuniões e integração com SharePoint e OneDrive"
+        },
+        {
+          "nome": "Sincronização e permissões no OneDrive e SharePoint"
+        },
+        {
+          "nome": "Navegadores (Edge e Chrome): cache, extensões, proxy e certificados de segurança"
+        },
+        {
+          "nome": "Certificação digital: tokens e smart cards ICP-Brasil"
+        },
+        {
+          "nome": "Suporte a ferramentas de videoconferência"
+        }
+      ]
     },
     {
       "nome": "Redes de Computadores Aplicadas ao Suporte",
       "topicos": [
-        { "nome": "Modelo OSI, pilha TCP/IP, endereçamento IPv4 e NAT" },
-        { "nome": "Diagnóstico de conectividade: ping, traceroute, nslookup, ipconfig e netstat" },
-        { "nome": "Redes sem fio (802.11n/ac/ax) e autenticação" },
-        { "nome": "Clientes VPN (SSL e IPSec)" },
-        { "nome": "Impressão em rede e servidores de impressão" },
-        { "nome": "Cabeamento estruturado (categorias Cat5e a Cat7) e conexões físicas" }
+        {
+          "nome": "Modelo OSI, pilha TCP/IP, endereçamento IPv4 e NAT"
+        },
+        {
+          "nome": "Diagnóstico de conectividade: ping, traceroute, nslookup, ipconfig e netstat"
+        },
+        {
+          "nome": "Redes sem fio (802.11n/ac/ax) e autenticação"
+        },
+        {
+          "nome": "Clientes VPN (SSL e IPSec)"
+        },
+        {
+          "nome": "Impressão em rede e servidores de impressão"
+        },
+        {
+          "nome": "Cabeamento estruturado (categorias Cat5e a Cat7) e conexões físicas"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Modelo OSI, pilha TCP/IP, endereçamento IPv4 e NAT"
+        },
+        {
+          "nome": "Diagnóstico de conectividade: ping, traceroute, nslookup, ipconfig e netstat"
+        },
+        {
+          "nome": "Redes sem fio (802.11n/ac/ax) e autenticação"
+        },
+        {
+          "nome": "Clientes VPN (SSL e IPSec)"
+        },
+        {
+          "nome": "Impressão em rede e servidores de impressão"
+        },
+        {
+          "nome": "Cabeamento estruturado (categorias Cat5e a Cat7) e conexões físicas"
+        }
+      ]
     },
     {
       "nome": "Segurança da Informação e Proteção de Dados",
       "topicos": [
-        { "nome": "Confidencialidade, integridade e disponibilidade" },
-        { "nome": "Malwares e fraudes: phishing, ransomware, vírus, worms e engenharia social" },
-        { "nome": "Antivírus corporativo e agentes EDR" },
-        { "nome": "Firewall do Windows" },
-        { "nome": "Criptografia de disco local com BitLocker" },
-        { "nome": "LGPD no atendimento ao usuário" }
+        {
+          "nome": "Confidencialidade, integridade e disponibilidade"
+        },
+        {
+          "nome": "Malwares e fraudes: phishing, ransomware, vírus, worms e engenharia social"
+        },
+        {
+          "nome": "Antivírus corporativo e agentes EDR"
+        },
+        {
+          "nome": "Firewall do Windows"
+        },
+        {
+          "nome": "Criptografia de disco local com BitLocker"
+        },
+        {
+          "nome": "LGPD no atendimento ao usuário"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Confidencialidade, integridade e disponibilidade"
+        },
+        {
+          "nome": "Malwares e fraudes: phishing, ransomware, vírus, worms e engenharia social"
+        },
+        {
+          "nome": "Antivírus corporativo e agentes EDR"
+        },
+        {
+          "nome": "Firewall do Windows"
+        },
+        {
+          "nome": "Criptografia de disco local com BitLocker"
+        },
+        {
+          "nome": "LGPD no atendimento ao usuário"
+        }
+      ]
     },
     {
       "nome": "Service Desk e ITIL",
       "topicos": [
-        { "nome": "ITIL v4 aplicado ao suporte; função da Central de Serviços (Service Desk)" },
-        { "nome": "Gerenciamento de Incidentes e de Requisições de Serviço: registro, categorização, priorização, escalonamento e encerramento" },
-        { "nome": "Acordo de Nível de Serviço (SLA)" },
-        { "nome": "Ferramentas de ITSM (Jira Service Management, GLPI ou OTRS)" },
-        { "nome": "Técnicas de atendimento e comunicação com o usuário" },
-        { "nome": "Inventário e controle de ativos de TI" }
+        {
+          "nome": "ITIL v4 aplicado ao suporte; função da Central de Serviços (Service Desk)"
+        },
+        {
+          "nome": "Gerenciamento de Incidentes e de Requisições de Serviço: registro, categorização, priorização, escalonamento e encerramento"
+        },
+        {
+          "nome": "Acordo de Nível de Serviço (SLA)"
+        },
+        {
+          "nome": "Ferramentas de ITSM (Jira Service Management, GLPI ou OTRS)"
+        },
+        {
+          "nome": "Técnicas de atendimento e comunicação com o usuário"
+        },
+        {
+          "nome": "Inventário e controle de ativos de TI"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "ITIL v4 aplicado ao suporte; função da Central de Serviços (Service Desk)"
+        },
+        {
+          "nome": "Gerenciamento de Incidentes e de Requisições de Serviço: registro, categorização, priorização, escalonamento e encerramento"
+        },
+        {
+          "nome": "Acordo de Nível de Serviço (SLA)"
+        },
+        {
+          "nome": "Ferramentas de ITSM (Jira Service Management, GLPI ou OTRS)"
+        },
+        {
+          "nome": "Técnicas de atendimento e comunicação com o usuário"
+        },
+        {
+          "nome": "Inventário e controle de ativos de TI"
+        }
+      ]
     },
     {
       "nome": "Normativos Transversais do Poder Judiciário",
       "topicos": [
-        { "nome": "Lei 13.709/2018 (LGPD)" },
-        { "nome": "Res. CNJ 335/2020 (Governança e Gestão da PDPJ-Br e do PJe)" },
-        { "nome": "Res. CNJ 522/2023 (Modelo de Requisitos para Sistemas Informatizados do Poder Judiciário)" },
-        { "nome": "Res. CNJ 396/2021 e Portaria CNJ 162/2021 (Estratégia Nacional de Segurança Cibernética — ENSEC-PJ)" }
+        {
+          "nome": "Lei 13.709/2018 (LGPD)"
+        },
+        {
+          "nome": "Res. CNJ 335/2020 (Governança e Gestão da PDPJ-Br e do PJe)"
+        },
+        {
+          "nome": "Res. CNJ 522/2023 (Modelo de Requisitos para Sistemas Informatizados do Poder Judiciário)"
+        },
+        {
+          "nome": "Res. CNJ 396/2021 e Portaria CNJ 162/2021 (Estratégia Nacional de Segurança Cibernética — ENSEC-PJ)"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Lei 13.709/2018 (LGPD)"
+        },
+        {
+          "nome": "Res. CNJ 335/2020 (Governança e Gestão da PDPJ-Br e do PJe)"
+        },
+        {
+          "nome": "Res. CNJ 522/2023 (Modelo de Requisitos para Sistemas Informatizados do Poder Judiciário)"
+        },
+        {
+          "nome": "Res. CNJ 396/2021 e Portaria CNJ 162/2021 (Estratégia Nacional de Segurança Cibernética — ENSEC-PJ)"
+        }
+      ]
     },
     {
       "nome": "Redação (Prova Discursiva)",
       "topicos": [
-        { "nome": "Texto dissertativo-argumentativo em prosa: introdução, desenvolvimento e conclusão" },
-        { "nome": "Tema no caderno de questões; uso dos textos de apoio sem copiar trechos" },
-        { "nome": "Nota zero: fugir ao tema ou gênero, 7 linhas ou menos, menos de 8 linhas autorais contínuas ou cópia da coletânea; 20 linhas ou menos não alcançam a nota máxima em Língua e Coesão" },
-        { "nome": "Norma culta, coesão e adequação ao tema (nota 0 a 10; mínimo 5,0 para ser habilitado)" },
-        { "nome": "Treino manuscrito com tempo (4h30 somadas à prova objetiva)" }
+        {
+          "nome": "Texto dissertativo-argumentativo em prosa: introdução, desenvolvimento e conclusão"
+        },
+        {
+          "nome": "Tema no caderno de questões; uso dos textos de apoio sem copiar trechos"
+        },
+        {
+          "nome": "Nota zero: fugir ao tema ou gênero, 7 linhas ou menos, menos de 8 linhas autorais contínuas ou cópia da coletânea; 20 linhas ou menos não alcançam a nota máxima em Língua e Coesão"
+        },
+        {
+          "nome": "Norma culta, coesão e adequação ao tema (nota 0 a 10; mínimo 5,0 para ser habilitado)"
+        },
+        {
+          "nome": "Treino manuscrito com tempo (4h30 somadas à prova objetiva)"
+        }
       ],
-      "aulas": []
+      "aulas": [
+        {
+          "nome": "Texto dissertativo-argumentativo em prosa: introdução, desenvolvimento e conclusão"
+        },
+        {
+          "nome": "Tema no caderno de questões; uso dos textos de apoio sem copiar trechos"
+        },
+        {
+          "nome": "Nota zero: fugir ao tema ou gênero, 7 linhas ou menos, menos de 8 linhas autorais contínuas ou cópia da coletânea; 20 linhas ou menos não alcançam a nota máxima em Língua e Coesão"
+        },
+        {
+          "nome": "Norma culta, coesão e adequação ao tema (nota 0 a 10; mínimo 5,0 para ser habilitado)"
+        },
+        {
+          "nome": "Treino manuscrito com tempo (4h30 somadas à prova objetiva)"
+        }
+      ]
     }
   ]
 }

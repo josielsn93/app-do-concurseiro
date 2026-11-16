@@ -14,3 +14,8 @@
 - Josi importa o JSON do TRF3 no app (Edital > Importar).
 - Se o TJ-SP for confirmado, manter o plano; se não, reaproveitar o tempo no TRF3/outros editais.
 - Opcional: tela de datas/requisitos no app; mais veículos em `radar/sources.json` (`trusted.names`).
+
+## Atualização — aulas nos JSONs
+- Causa da Home sem "Próxima ação": `getNextSuggestedLesson` (src/js/logic/progress.js) olha só `aulas`; os JSONs tinham `aulas: []`.
+- Correção: uma aula por tópico em ambos os JSONs; teste `tests/unit/editais-json.test.js` garante isso e a validação do importador.
+- Agenda diária só existe com Planejamento ativo (Ciclo/Semanal/Reta Final); app usa um edital principal por vez (outros ficam arquivados).
