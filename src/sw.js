@@ -146,6 +146,7 @@ const ASSET_PATHS = [
   './js/ui/dialog.js',
   './js/ui/dom.js',
   './js/ui/event-modals.js',
+  './js/ui/event-detail-view.js',
   './js/ui/search.js',
   './js/views/home-view.js',
   './js/views/med-view.js',

@@ -67,3 +67,35 @@ describe('plano de estudos TJ-SP Escrevente (cronograma dia a dia)', () => {
     expect(topicos.some((t) => t.startsWith('Revisão de erros'))).toBe(true);
   });
 });
+
+describe('aulas aprofundadas (conteúdo de 1 hora) das semanas 1 e 2', () => {
+  const diasComAula = ['2026-11-16', '2026-11-17', '2026-11-18', '2026-11-19', '2026-11-20', '2026-11-23', '2026-11-24', '2026-11-25', '2026-11-26'];
+
+  it.each(diasComAula)('%s: o bloco de teoria é uma aula completa', async (data) => {
+    const { renderLessonNotes } = await import('../../src/js/ui/event-detail-view.js');
+    const bloco = plano.dias.find((d) => d.data === data).blocos[0];
+    const n = bloco.notas;
+    expect(n.length).toBeGreaterThan(3500);
+    expect(n.length).toBeLessThan(10000);
+    for (const secao of ['## 🎯 Objetivo', '## ⏱ Roteiro', '## 📖 Teoria', '## 🏦 Como a Vunesp cobra', '## ⚠️', '## ✍️ Exercícios', '## 📝 Para o caderno de erros']) {
+      expect(n, `${data} sem "${secao}"`).toContain(secao);
+    }
+    expect((n.match(/\*\*Questão \d/g) || []).length).toBeGreaterThanOrEqual(4);
+    expect((n.match(/^::: Gabarito/gm) || []).length).toBeGreaterThanOrEqual(4);
+    const html = renderLessonNotes(n);
+    expect(html).toContain('<table');
+    expect(html).toContain('<details');
+    expect(html).not.toContain('**'); // nenhum negrito sem converter
+  });
+
+  it('cada questão tem alternativas A a E e a letra do gabarito é uma delas', () => {
+    for (const data of diasComAula) {
+      const n = plano.dias.find((d) => d.data === data).blocos[0].notas;
+      const questoes = n.split(/\*\*Questão \d+\./).slice(1);
+      for (const q of questoes) {
+        for (const letra of ['A', 'B', 'C', 'D', 'E']) expect(q, `${data}: falta (${letra})`).toContain(`- (${letra})`);
+        expect(q).toMatch(/\*\*Letra [A-E]\.\*\*/);
+      }
+    }
+  });
+});

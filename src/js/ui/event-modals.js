@@ -10,6 +10,7 @@ import { filterEventsBySelectedEdital, getSelectedEditalId } from '../edital-fil
 import { renderCurrentView, renderEventCard } from '../components.js?v=8.37';
 import { currentView, openModal, closeModal, showConfirm, showToast } from '../app.js?v=8.37';
 import { openRegistroSessao } from '../registro-sessao.js?v=8.37';
+import { buildEventDetailHtml } from './event-detail-view.js?v=8.37';
 
 // =============================================
 // ADD EVENT MODAL
@@ -502,86 +503,16 @@ export function openEventDetail(eventId) {
   if (editBtn) editBtn.dataset.eventId = eventId;
   if (deleteBtn) deleteBtn.dataset.eventId = eventId;
 
-  body.innerHTML = `
-    <div class="event-detail-grid">
-      <div class="event-detail-field">
-        <div class="event-detail-label">Status</div>
-        <div class="event-detail-value"><span class="badge ${status.class}">${status.label}</span></div>
-      </div>
-      <div class="event-detail-field">
-        <div class="event-detail-label">Data</div>
-        <div class="event-detail-value">${ev.data || '—'}</div>
-      </div>
-      <div class="event-detail-field">
-        <div class="event-detail-label">Duração</div>
-        <div class="event-detail-value">${ev.duracao ? `${ev.duracao} min` : '—'}</div>
-      </div>
-      <div class="event-detail-field">
-        <div class="event-detail-label">Tempo Acumulado</div>
-        <div class="event-detail-value">${ev.tempoAcumulado > 0 ? formatTime(ev.tempoAcumulado) : '—'}</div>
-      </div>
-      ${
-        disc
-          ? `
-        <div class="event-detail-field">
-          <div class="event-detail-label">Disciplina</div>
-          <div class="event-detail-value">${disc.disc.icone || '📚'} ${esc(disc.disc.nome)}</div>
-        </div>
-      `
-          : ''
-      }
-      ${
-        ev.assId
-          ? `
-        <div class="event-detail-field">
-          <div class="event-detail-label">Assunto</div>
-          <div class="event-detail-value">${esc(getAssuntoName(ev.discId, ev.assId))}</div>
-        </div>
-      `
-          : ''
-      }
-      ${
-        ev.aulaId
-          ? `
-        <div class="event-detail-field">
-          <div class="event-detail-label">Aula</div>
-          <div class="event-detail-value">${esc(getAulaName(ev.discId, ev.aulaId))}</div>
-        </div>
-      `
-          : ''
-      }
-      ${
-        ev.notas
-          ? `
-        <div class="event-detail-field event-detail-field--full">
-          <div class="event-detail-label">Anotações</div>
-          <div class="event-detail-value event-detail-notes">${esc(ev.notas)}</div>
-        </div>
-      `
-          : ''
-      }
-      ${
-        ev.fontes
-          ? `
-        <div class="event-detail-field event-detail-field--full">
-          <div class="event-detail-label">Fontes</div>
-          <div class="event-detail-value">${esc(ev.fontes)}</div>
-        </div>
-      `
-          : ''
-      }
-      ${
-        ev.legislacao
-          ? `
-        <div class="event-detail-field event-detail-field--full">
-          <div class="event-detail-label">Legislação</div>
-          <div class="event-detail-value">${esc(ev.legislacao)}</div>
-        </div>
-      `
-          : ''
-      }
-    </div>
-  `;
+  body.innerHTML = buildEventDetailHtml({
+    ev,
+    status,
+    disciplina: disc ? `${disc.disc.icone || '📚'} ${disc.disc.nome}` : '',
+    assunto: ev.assId ? getAssuntoName(ev.discId, ev.assId) : '',
+    aula: ev.aulaId ? getAulaName(ev.discId, ev.aulaId) : '',
+    tempo: ev.tempoAcumulado > 0 ? formatTime(ev.tempoAcumulado) : '—',
+  });
+  body.scrollTop = 0;
+  body.closest('.modal')?.scrollTo?.(0, 0);
 
   openModal('modal-event-detail');
 }

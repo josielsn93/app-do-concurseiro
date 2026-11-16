@@ -31,3 +31,18 @@
 - Edital TJ-SP JSON ganhou: tópico "Questões da banca Vunesp" em cada matéria (exceto Redação) e a disciplina "Simulados e Revisão" (diagnóstico, simulados 1–4, prova TRF3, revisão de erros etc.). O plano referencia só nomes que existem no edital (teste `tests/unit/plano-tjsp-json.test.js`).
 - Importar: apagar o edital TJ-SP antigo no app, importar o JSON do edital novo, depois Ciclo de Estudos > Importar Reta Final (JSON).
 - Limites: orientações são textos estáticos (sem IA no app); links não incluídos de propósito (sem URLs específicas). Não testado na interface real (e2e indisponível). Falta: mesmo tipo de plano para o TRF3 se ele virar principal; avaliar tela de dados/requisitos do edital.
+
+## Atualização: aulas aprofundadas + layout da aula (16/11/2026)
+
+**Feito**
+- Novo renderizador `src/js/ui/event-detail-view.js` (`renderLessonNotes`, `buildEventDetailHtml`): o modal do evento agora mostra a aula com seções semânticas (h3/h4, tabelas, listas, gabarito recolhível em `<details>`), responsivo (CSS ao final de `src/css/views.css`, classe `modal-lesson` em `index.html`). Usado por `openEventDetail` em `event-modals.js`. Não foi validado no app real (só em página de teste no Chrome headless).
+- Aulas completas de 1 hora (objetivo, roteiro minuto a minuto, teoria, como a Vunesp cobra, pegadinhas, 5 questões com gabarito comentado, caderno de erros) em `docs/plano-tjsp/conteudo/LP-*.md` — Língua Portuguesa, semanas 1 e 2 (dias 16/11 a 26/11).
+- `docs/plano-tjsp/gen_plano.py` agora usa `conteudo/<SIGLA>-<idx>[-<idx>].md` como `notas` do bloco de teoria de 60 min quando o arquivo existe; senão mantém a nota curta (FOCO/COMO/FONTES).
+- Testes: `tests/unit/event-detail-view.test.js` e bloco novo em `plano-tjsp-json.test.js` (seções, ≥4 questões A–E com gabarito, <10.000 caracteres).
+
+**Falta**
+- Escrever as aulas das demais disciplinas/semanas (sugestão: Direito Constitucional em seguida, depois Administrativo, Penal, Processo Civil/Penal etc.). Seguir o formato dos arquivos LP-*.md; nomes: sigla da disciplina (LP, DA, PP, PC, DC, LI, DP, RL, INF, MAT, ATU) + índices dos tópicos do bloco.
+- Conferir o layout no navegador real e em celular.
+
+**Como regenerar**: `python3 -I docs/plano-tjsp/gen_plano.py` (reescreve `docs/cronogramas/plano-tjsp-escrevente-2026.json` e o edital JSON), depois `npx vitest run tests/unit/plano-tjsp-json.test.js tests/unit/editais-json.test.js`.
+**Reimportar no app**: Ciclo de Estudos > Importar Reta Final (JSON) com o plano novo (apague o plano anterior antes).
