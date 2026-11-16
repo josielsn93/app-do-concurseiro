@@ -53,3 +53,8 @@
 ## Atualização técnica (16/11/2026, tarde)
 - Gerador do plano (em `privado/`) agora produz só dias úteis; revisões 24h/7d/30d por assunto; testes em `tests/unit/plano-tjsp-json.test.js` (pulados se `privado/` não existir). Regenerar: `python3 -I privado/plano-tjsp/gen_plano.py`.
 - Gerador (em `privado/`) passou a aceitar aulas de várias horas por assunto (`SIGLA-idx-pN.md`); testes novos em `tests/unit/plano-tjsp-json.test.js`. Suíte completa: 193 arquivos / 3115 testes verdes.
+
+
+## Atualização técnica (sessão atual)
+- Novo teste `tests/unit/conteudo-aulas-privado.test.js`: valida a estrutura (seções, 5 questões A–E com gabarito, tamanho) dos arquivos de aula listados por sigla; pulado quando `privado/` não existe.
+- Por decisão do usuário, nenhum JSON é regenerado até todas as matérias terem aulas escritas; depois: rodar o gerador, testes e reimportar.
