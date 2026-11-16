@@ -20,3 +20,10 @@
 1. Configurar o bot e os secrets (ver `docs/radar-concursos.md`).
 2. Disparar o workflow e revisar a primeira mensagem.
 3. Só então avançar para fontes diretas e para a tela no app.
+
+## Atualização (v2, mesmo dia)
+- Primeira execução real concluída com sucesso (resumo chegou no Telegram, 217 novidades por falta de histórico).
+- Refinado a pedido do usuário: só estágios confirmados (autorizado, comissão, banca, edital), só fontes oficiais ou da lista `trusted` em `radar/sources.json`, sem resumos genéricos nem cargos fora do perfil, resumo com no máximo 3 itens por trilha separado em "Em preparação" e "Edital publicado".
+- Trilha "Tribunais (nacional)" removida (trazia concursos de outros estados); adicionada consulta de TRF4/TRT-4 na trilha do Sul.
+- Itens antigos do `radar.json` que não passam nos critérios novos são descartados na próxima execução.
+- Pendente: avaliar se a lista de fontes confiáveis está restrita demais depois de uma semana real de envios.

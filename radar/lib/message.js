@@ -1,17 +1,9 @@
 import { STAGE_RANK } from './classify.js';
 
-const STAGE_LABEL = {
-  edital: 'edital publicado',
-  banca: 'banca definida',
-  comissao: 'comissão formada',
-  autorizado: 'autorizado',
-  previsto: 'previsão',
-  noticia: 'notícia',
-};
+const STAGE_TAG = { autorizado: 'autorizado', comissao: 'comissão', banca: 'banca' };
 
 const LIMIT = 3900;
-const FOOTER =
-  '<i>Classificação automática por palavras-chave: confira sempre a fonte antes de agir.</i>';
+const FOOTER = '<i>Estágio detectado automaticamente; confira o link.</i>';
 
 export function escapeHtml(text) {
   return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -30,43 +22,47 @@ function formatDate(now) {
   });
 }
 
-function shorten(text, max = 160) {
+function shorten(text, max = 110) {
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
 }
 
-function topStage(entries) {
-  return entries.reduce(
-    (best, e) => ((STAGE_RANK[e.stage] ?? 0) > (STAGE_RANK[best] ?? -1) ? e.stage : best),
-    'noticia'
-  );
+function line(item, withTag) {
+  const tag = withTag ? `[${STAGE_TAG[item.stage] ?? item.stage}] ` : '';
+  const source = item.source ? ` — ${escapeHtml(item.source)}` : '';
+  return `• ${tag}<a href="${escapeAttr(item.link)}">${escapeHtml(shorten(item.title))}</a>${source}`;
 }
 
-function trackBlock(track, news, all, maxPerTrack) {
-  const stage = topStage([...news, ...all]);
-  const lines = [`<b>${escapeHtml(track.label)}</b> — mais avançado: ${STAGE_LABEL[stage]}`];
-  const sorted = [...news].sort((a, b) => (STAGE_RANK[b.stage] ?? 0) - (STAGE_RANK[a.stage] ?? 0));
-  for (const item of sorted.slice(0, maxPerTrack)) {
-    const src = item.source ? ` — ${escapeHtml(item.source)}` : '';
-    lines.push(
-      `• [${STAGE_LABEL[item.stage]}] <a href="${escapeAttr(item.link)}">${escapeHtml(shorten(item.title))}</a>${src}`
-    );
+function trackBlock(track, news, maxPerTrack) {
+  const prep = news
+    .filter((i) => i.stage !== 'edital')
+    .sort((a, b) => (STAGE_RANK[b.stage] ?? 0) - (STAGE_RANK[a.stage] ?? 0));
+  const published = news.filter((i) => i.stage === 'edital');
+  const ordered = [...prep, ...published];
+  const shown = ordered.slice(0, maxPerTrack);
+  const shownPrep = shown.filter((i) => i.stage !== 'edital');
+  const shownPublished = shown.filter((i) => i.stage === 'edital');
+
+  const lines = [`<b>${escapeHtml(track.label)}</b>`];
+  if (shownPrep.length) {
+    lines.push('<i>Em preparação</i>', ...shownPrep.map((i) => line(i, true)));
   }
-  if (sorted.length > maxPerTrack) lines.push(`+${sorted.length - maxPerTrack} outras notícias nesta trilha`);
+  if (shownPublished.length) {
+    lines.push('<i>Edital publicado</i>', ...shownPublished.map((i) => line(i, false)));
+  }
+  if (ordered.length > shown.length) lines.push(`+${ordered.length - shown.length} outras`);
   return lines.join('\n');
 }
 
-export function buildDigest({ tracks, added, items, now = new Date(), maxPerTrack = 5 }) {
+export function buildDigest({ tracks, added, now = new Date(), maxPerTrack = 3 }) {
   const header = `<b>📡 Radar de concursos — ${formatDate(now)}</b>`;
   const summary = added.length
-    ? `${added.length} novidade${added.length > 1 ? 's' : ''} nesta semana.`
-    : 'Sem novidades nesta semana.';
+    ? `${added.length} novidade${added.length > 1 ? 's' : ''} confirmada${added.length > 1 ? 's' : ''}.`
+    : 'Sem novidades confirmadas nesta semana.';
 
   const blocks = [];
   for (const track of tracks) {
     const news = added.filter((i) => i.track === track.id);
-    const all = items.filter((i) => i.track === track.id);
-    if (!news.length && !all.length) continue;
-    blocks.push(trackBlock(track, news, all, maxPerTrack));
+    if (news.length) blocks.push(trackBlock(track, news, maxPerTrack));
   }
 
   const messages = [];
@@ -74,15 +70,17 @@ export function buildDigest({ tracks, added, items, now = new Date(), maxPerTrac
   for (const block of blocks) {
     if (current.length + block.length + 2 > LIMIT) {
       messages.push(current);
-      current = `<b>📡 Radar de concursos (continuação)</b>`;
+      current = '<b>📡 Radar de concursos (continuação)</b>';
     }
     current += `\n\n${block}`;
   }
-  if (current.length + FOOTER.length + 2 > LIMIT) {
-    messages.push(current);
-    current = FOOTER;
-  } else {
-    current += `\n\n${FOOTER}`;
+  if (blocks.length) {
+    if (current.length + FOOTER.length + 2 > LIMIT) {
+      messages.push(current);
+      current = FOOTER;
+    } else {
+      current += `\n\n${FOOTER}`;
+    }
   }
   messages.push(current);
   return messages;

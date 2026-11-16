@@ -1,4 +1,33 @@
 {
+  "trusted": {
+    "domains": [".gov.br", ".jus.br", ".leg.br", ".mp.br"],
+    "names": [
+      "Diário Oficial da União",
+      "Diário Oficial do Estado de São Paulo",
+      "Tribunal de Justiça de São Paulo",
+      "TJSP",
+      "Governo do Estado de São Paulo",
+      "Prefeitura de São Paulo",
+      "Agência Brasil",
+      "Agência Senado",
+      "Agência Câmara de Notícias",
+      "Folha de S.Paulo",
+      "Folha Dirigida",
+      "Estadão",
+      "O Estado de S. Paulo",
+      "G1",
+      "O Globo",
+      "UOL",
+      "CNN Brasil",
+      "Valor Econômico",
+      "Poder360",
+      "Metrópoles",
+      "JOTA",
+      "PCI Concursos",
+      "Estratégia Concursos",
+      "Direção Concursos"
+    ]
+  },
   "tracks": [
     {
       "id": "tjsp",
@@ -19,20 +48,13 @@
       ]
     },
     {
-      "id": "tribunais-nacional",
-      "label": "Tribunais (nacional)",
-      "queries": [
-        "concurso \"técnico judiciário\" autorizado",
-        "concurso tribunais previsão edital"
-      ]
-    },
-    {
       "id": "tjs-sul",
-      "label": "TJs do Sul (RS, SC, PR)",
+      "label": "Justiça do Sul (RS, SC, PR)",
       "queries": [
         "\"TJRS\" OR \"TJ-RS\" concurso",
         "\"TJSC\" OR \"TJ-SC\" concurso",
-        "\"TJPR\" OR \"TJ-PR\" concurso"
+        "\"TJPR\" OR \"TJ-PR\" concurso",
+        "\"TRF4\" OR \"TRT-4\" OR \"TRT 4\" concurso"
       ]
     },
     {
@@ -58,7 +80,7 @@
     },
     {
       "id": "educacao",
-      "label": "Educação (técnico-administrativo e secretarias)",
+      "label": "Educação (técnico-administrativo)",
       "queries": [
         "concurso técnico administrativo em educação \"IFSP\" OR \"USP\" OR \"Unesp\" OR \"Unicamp\"",
         "concurso \"Secretaria da Educação\" \"São Paulo\""

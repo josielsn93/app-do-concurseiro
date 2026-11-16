@@ -10,6 +10,17 @@ export const STAGE_RANK = {
 const NOISE =
   /gabarito|resultado|convocac|nomeac|homologac|apostila|curso preparatorio|simulado|mentoria|lista de aprovados/;
 
+// Resumos genéricos que listam vários concursos em vez de noticiar um específico.
+const ROUNDUP =
+  /\b(editais|concursos) (abertos|previstos|previstas|em andamento)\b|editais previstos|editais abertos|oportunidades|ranking|melhores concursos|calendario de concursos|confira os|vagas previstas/;
+
+// Cargos que exigem formação específica fora do perfil (Direito, Medicina, Engenharia, magistério etc.).
+const OFF_PROFILE =
+  /\b(juiz|juiza|juizes|magistratura|procurador|procuradora|promotor|promotora|defensor|defensora|delegado|delegada|medico|medica|engenheiro|engenheira|engenharia|arquiteto|arquiteta|professor|professora|docente|enfermeiro|enfermeira|odontologo|psicologo|oficial de justica|cartorio|cartorios|serventia|notarial|outorga)\b/;
+
+// Banca ainda não definida: não conta como estágio "banca".
+const BANCA_PENDING = /em definicao|a definir|sem banca|escolha da banca|prazo para (a )?escolha|aguarda\w* (a )?(definicao|banca)/;
+
 const RELEVANT = /concurso|edital|selecao publica|processo seletivo|\bvagas?\b|autoriza|banca/;
 
 const STAGES = [
@@ -27,7 +38,7 @@ const STAGES = [
   ],
   [
     'autorizado',
-    /autoriz|portaria|liberad[oa]|libera\w* concurso|aprovad[oa] (a |o )?(realizacao|concurso)|\bloa\b|lei orcamentaria|orcamento/,
+    /autoriz|portaria|liberad[oa]|libera\w* concurso|aprovad[oa] (a |o )?(realizacao|concurso)/,
   ],
   [
     'previsto',
@@ -44,8 +55,11 @@ function normalize(text) {
 
 export function classify(text) {
   const norm = normalize(text);
-  if (NOISE.test(norm) || !RELEVANT.test(norm)) return { relevant: false, stage: 'noticia' };
+  if (NOISE.test(norm) || ROUNDUP.test(norm) || OFF_PROFILE.test(norm) || !RELEVANT.test(norm)) {
+    return { relevant: false, stage: 'noticia' };
+  }
   for (const [stage, pattern] of STAGES) {
+    if (stage === 'banca' && BANCA_PENDING.test(norm)) continue;
     if (pattern.test(norm)) return { relevant: true, stage };
   }
   return { relevant: true, stage: 'noticia' };

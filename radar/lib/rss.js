@@ -36,6 +36,7 @@ export function parseRss(xml) {
     const link = decodeEntities(unwrapCdata(tag(block, 'link'))).trim();
     if (!link) continue;
     const source = plainText(tag(block, 'source'));
+    const sourceUrl = (block.match(/<source[^>]*\surl="([^"]*)"/i)?.[1] ?? '').trim();
     let title = decodeEntities(unwrapCdata(tag(block, 'title'))).replace(/\s+/g, ' ').trim();
     const suffix = ` - ${source}`;
     if (source && title.endsWith(suffix)) title = title.slice(0, -suffix.length).trim();
@@ -44,6 +45,7 @@ export function parseRss(xml) {
       link,
       pubDate: toIso(tag(block, 'pubDate').trim()),
       source,
+      sourceUrl,
       description: plainText(tag(block, 'description')),
     });
   }

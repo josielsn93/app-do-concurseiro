@@ -2,12 +2,24 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseRss } from './lib/rss.js';
-import { classify } from './lib/classify.js';
+import { STAGE_RANK, classify } from './lib/classify.js';
+import { isTrusted } from './lib/trust.js';
 import { mergeRadar } from './lib/merge.js';
 import { buildDigest } from './lib/message.js';
 import { sendTelegram } from './lib/telegram.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
+
+// Só entram estágios confirmados (autorizado em diante); previsão e notícia solta são especulação.
+const MIN_RANK = STAGE_RANK.autorizado;
+
+function keepStored(item, trusted) {
+  return (
+    classify(item.title).relevant &&
+    (STAGE_RANK[item.stage] ?? 0) >= MIN_RANK &&
+    isTrusted({ source: item.source, sourceUrl: item.sourceUrl }, trusted)
+  );
+}
 
 export function buildFeedUrl(query, days) {
   const q = encodeURIComponent(`${query} when:${days}d`);
@@ -34,7 +46,10 @@ export async function runRadar({
   windowDays = 21,
 }) {
   const file = join(dataDir, 'radar.json');
-  const previous = loadPrevious(file, log);
+  const loaded = loadPrevious(file, log);
+  const previous = loaded
+    ? { ...loaded, items: (loaded.items ?? []).filter((item) => keepStored(item, sources.trusted)) }
+    : null;
   const token = env.TELEGRAM_BOT_TOKEN;
   const chatId = env.TELEGRAM_CHAT_ID;
   const canSend = Boolean(token && chatId);
@@ -54,13 +69,15 @@ export async function runRadar({
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         for (const entry of parseRss(await res.text())) {
           const verdict = classify(`${entry.title} ${entry.description}`);
-          if (!verdict.relevant) continue;
+          if (!verdict.relevant || (STAGE_RANK[verdict.stage] ?? 0) < MIN_RANK) continue;
+          if (!isTrusted({ source: entry.source, sourceUrl: entry.sourceUrl }, sources.trusted)) continue;
           candidates.push({
             track: track.id,
             stage: verdict.stage,
             title: entry.title,
             link: entry.link,
             source: entry.source,
+            sourceUrl: entry.sourceUrl,
             publishedAt: entry.pubDate,
           });
         }
@@ -89,7 +106,7 @@ export async function runRadar({
 
   let telegramSent = 0;
   if (canSend) {
-    const texts = buildDigest({ tracks: sources.tracks, added, items: radar.items, now });
+    const texts = buildDigest({ tracks: sources.tracks, added, now });
     telegramSent = await sendTelegram({ token, chatId, texts, fetchImpl });
   } else {
     log('Telegram não configurado (TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID); resumo não enviado.');

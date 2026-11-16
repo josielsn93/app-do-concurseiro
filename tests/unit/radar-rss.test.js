@@ -29,6 +29,7 @@ describe('parseRss', () => {
       link: 'https://news.example/a1',
       pubDate: '2026-11-09T12:00:00.000Z',
       source: 'Folha Dirigida',
+      sourceUrl: 'https://folha.example',
       description: 'Concurso & vagas novas',
     });
   });
@@ -37,6 +38,7 @@ describe('parseRss', () => {
     const [, second] = parseRss(FEED);
     expect(second.title).toBe('Banca "Vunesp" definida & contratada');
     expect(second.pubDate).toBeNull();
+    expect(second.sourceUrl).toBe('https://pci.example');
     expect(second.description).toBe('');
   });
 

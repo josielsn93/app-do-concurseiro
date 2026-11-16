@@ -49,6 +49,7 @@ export function mergeRadar(previous, candidates, { now = new Date(), maxAgeDays 
       title: cand.title,
       link: cand.link,
       source: cand.source ?? '',
+      sourceUrl: cand.sourceUrl ?? '',
       publishedAt: cand.publishedAt ?? null,
       firstSeen: nowIso,
     };
