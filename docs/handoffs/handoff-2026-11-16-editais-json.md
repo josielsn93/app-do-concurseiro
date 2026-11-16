@@ -24,3 +24,10 @@
 - Bug: `dispatcher.js` chamava `preventDefault()` no clique de qualquer `[data-action]`, inclusive `<input type="date">`, impedindo o seletor nativo. Agora campos date/time/datetime-local/month/week são ignorados no click (a ação roda no `change`).
 - Meta de horas do Ciclo agora é opcional: `resolveCicloHoras` (src/js/planejamento/validation.js) = meta informada, ou dias ativos × matérias/dia × sessão máxima (h). Usado em `generatePlanejamento` e na validação do passo 4 (exige ao menos 1 dia ativo se a meta estiver vazia).
 - Testes: actions-dispatcher, planejamento-validation. Suíte unit completa: 3067 passando.
+
+## Atualização — plano dia a dia (instrutor)
+- Pedido: ao subir o JSON, o app devia gerar plano com o que estudar cada dia, orientação, questões, revisão e simulados.
+- Solução sem mudar o app: o importador de cronograma (Reta Final, formato `dias[].blocos[]` com `notas`) já alimenta Home ("Próxima ação") e calendário. Gerado `docs/cronogramas/plano-tjsp-escrevente-2026.json` (17 semanas, 16/11/2026 a 14/03/2027, 119 dias, 314 blocos, horas por semana conforme o plano do Docs) por `gen_plano.py` (fora do repo, em /home/claude/work; regenerar se mudar o plano).
+- Edital TJ-SP JSON ganhou: tópico "Questões da banca Vunesp" em cada matéria (exceto Redação) e a disciplina "Simulados e Revisão" (diagnóstico, simulados 1–4, prova TRF3, revisão de erros etc.). O plano referencia só nomes que existem no edital (teste `tests/unit/plano-tjsp-json.test.js`).
+- Importar: apagar o edital TJ-SP antigo no app, importar o JSON do edital novo, depois Ciclo de Estudos > Importar Reta Final (JSON).
+- Limites: orientações são textos estáticos (sem IA no app); links não incluídos de propósito (sem URLs específicas). Não testado na interface real (e2e indisponível). Falta: mesmo tipo de plano para o TRF3 se ele virar principal; avaliar tela de dados/requisitos do edital.

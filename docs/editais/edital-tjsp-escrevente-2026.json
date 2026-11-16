@@ -46,6 +46,9 @@
         },
         {
           "nome": "Pontuação"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ],
       "aulas": [
@@ -87,6 +90,9 @@
         },
         {
           "nome": "Pontuação"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ]
     },
@@ -104,6 +110,9 @@
         },
         {
           "nome": "Lei de Improbidade Administrativa (Lei 8.429/1992)"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ],
       "aulas": [
@@ -118,6 +127,9 @@
         },
         {
           "nome": "Lei de Improbidade Administrativa (Lei 8.429/1992)"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ]
     },
@@ -141,6 +153,9 @@
         },
         {
           "nome": "Lei 9.099/1995 (Juizados Especiais) — arts. 60 a 83; 88 e 89"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ],
       "aulas": [
@@ -161,6 +176,9 @@
         },
         {
           "nome": "Lei 9.099/1995 (Juizados Especiais) — arts. 60 a 83; 88 e 89"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ]
     },
@@ -187,6 +205,9 @@
         },
         {
           "nome": "Lei 12.153/2009 (Juizados Especiais da Fazenda Pública)"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ],
       "aulas": [
@@ -210,6 +231,9 @@
         },
         {
           "nome": "Lei 12.153/2009 (Juizados Especiais da Fazenda Pública)"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ]
     },
@@ -230,6 +254,9 @@
         },
         {
           "nome": "CF art. 92 — Órgãos do Poder Judiciário"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ],
       "aulas": [
@@ -247,6 +274,9 @@
         },
         {
           "nome": "CF art. 92 — Órgãos do Poder Judiciário"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ]
     },
@@ -267,6 +297,9 @@
         },
         {
           "nome": "Normas da Corregedoria Geral da Justiça — Tomo I (capítulos e seções conforme o Anexo VIII do edital)"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ],
       "aulas": [
@@ -284,6 +317,9 @@
         },
         {
           "nome": "Normas da Corregedoria Geral da Justiça — Tomo I (capítulos e seções conforme o Anexo VIII do edital)"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ]
     },
@@ -298,6 +334,9 @@
         },
         {
           "nome": "Crimes contra a Administração da Justiça — CP arts. 339 a 347; 357 e 359"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ],
       "aulas": [
@@ -309,6 +348,9 @@
         },
         {
           "nome": "Crimes contra a Administração da Justiça — CP arts. 339 a 347; 357 e 359"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ]
     },
@@ -326,6 +368,9 @@
         },
         {
           "nome": "Sequências numéricas e figurais"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ],
       "aulas": [
@@ -340,6 +385,9 @@
         },
         {
           "nome": "Sequências numéricas e figurais"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ]
     },
@@ -360,6 +408,9 @@
         },
         {
           "nome": "Microsoft Teams, SharePoint, OneNote e OneDrive"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ],
       "aulas": [
@@ -377,6 +428,9 @@
         },
         {
           "nome": "Microsoft Teams, SharePoint, OneNote e OneDrive"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ]
     },
@@ -409,6 +463,9 @@
         },
         {
           "nome": "Situações-problema"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ],
       "aulas": [
@@ -438,6 +495,9 @@
         },
         {
           "nome": "Situações-problema"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ]
     },
@@ -449,6 +509,9 @@
         },
         {
           "nome": "Estatuto da Pessoa com Deficiência (Lei 13.146/2015) — arts. 1º a 13 e 34 a 38"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ],
       "aulas": [
@@ -457,6 +520,9 @@
         },
         {
           "nome": "Estatuto da Pessoa com Deficiência (Lei 13.146/2015) — arts. 1º a 13 e 34 a 38"
+        },
+        {
+          "nome": "Questões da banca Vunesp"
         }
       ]
     },
@@ -500,6 +566,91 @@
         },
         {
           "nome": "Treino manuscrito com tempo (5 horas somadas à prova objetiva)"
+        }
+      ]
+    },
+    {
+      "nome": "Simulados e Revisão",
+      "topicos": [
+        {
+          "nome": "Diagnóstico — prova anterior Vunesp"
+        },
+        {
+          "nome": "Questões mistas"
+        },
+        {
+          "nome": "Revisão espaçada (1, 7 e 30 dias)"
+        },
+        {
+          "nome": "Revisão de erros (caderno de erros)"
+        },
+        {
+          "nome": "Planejamento da semana"
+        },
+        {
+          "nome": "Simulado parcial (Português + Direito)"
+        },
+        {
+          "nome": "Simulado 1 (Blocos I e II)"
+        },
+        {
+          "nome": "Simulado 2 (prova completa)"
+        },
+        {
+          "nome": "Simulado 3 (prova completa)"
+        },
+        {
+          "nome": "Simulado 4 (prova completa)"
+        },
+        {
+          "nome": "Prova TRF3 (31/01) — simulado real"
+        },
+        {
+          "nome": "Logística e descanso antes da prova"
+        },
+        {
+          "nome": "Prova TJ-SP Escrevente (14/03/2027)"
+        }
+      ],
+      "aulas": [
+        {
+          "nome": "Diagnóstico — prova anterior Vunesp"
+        },
+        {
+          "nome": "Questões mistas"
+        },
+        {
+          "nome": "Revisão espaçada (1, 7 e 30 dias)"
+        },
+        {
+          "nome": "Revisão de erros (caderno de erros)"
+        },
+        {
+          "nome": "Planejamento da semana"
+        },
+        {
+          "nome": "Simulado parcial (Português + Direito)"
+        },
+        {
+          "nome": "Simulado 1 (Blocos I e II)"
+        },
+        {
+          "nome": "Simulado 2 (prova completa)"
+        },
+        {
+          "nome": "Simulado 3 (prova completa)"
+        },
+        {
+          "nome": "Simulado 4 (prova completa)"
+        },
+        {
+          "nome": "Prova TRF3 (31/01) — simulado real"
+        },
+        {
+          "nome": "Logística e descanso antes da prova"
+        },
+        {
+          "nome": "Prova TJ-SP Escrevente (14/03/2027)"
         }
       ]
     }
