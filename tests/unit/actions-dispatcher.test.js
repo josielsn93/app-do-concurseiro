@@ -85,6 +85,29 @@ describe('dispatcher.js', () => {
       expect(event.preventDefault).not.toHaveBeenCalled();
     });
 
+    it.each(['date', 'time', 'datetime-local', 'month', 'week'])(
+      'não bloqueia o clique em <input type="%s"> (o seletor nativo precisa abrir)',
+      (type) => {
+        const handler = vi.fn();
+        dispatcher.registerAction('pick-action', handler);
+        dispatcher.setupActionDispatcher();
+
+        const target = {
+          tagName: 'INPUT',
+          type,
+          dataset: { action: 'pick-action' },
+          closest: vi.fn(function () { return this; }),
+        };
+        const event = { target, preventDefault: vi.fn(), stopPropagation: vi.fn() };
+
+        global._listeners['click'][0](event);
+
+        expect(event.preventDefault).not.toHaveBeenCalled();
+        expect(event.stopPropagation).not.toHaveBeenCalled();
+        expect(handler).not.toHaveBeenCalled();
+      }
+    );
+
     it('warns when action not found', () => {
       const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       dispatcher.setupActionDispatcher();

@@ -2,6 +2,19 @@
  * Validation logic for the planejamento wizard.
  * Pure functions — receive draft as parameter, return boolean.
  */
+/**
+ * Horas totais de uma rodada do Ciclo. Se o usuário não informou a meta,
+ * calcula: dias de estudo × matérias por dia × sessão máxima (em horas).
+ */
+export function resolveCicloHoras(draft) {
+  const informado = parseFloat(draft.horarios.horasSemanais) || 0;
+  if (informado > 0) return informado;
+  const dias = (draft.horarios.diasAtivos || []).length;
+  const materias = parseInt(draft.materiasPorDia, 10) || 3;
+  const sessaoMax = parseInt(draft.horarios.sessaoMax, 10) || 120;
+  return (dias * materias * sessaoMax) / 60;
+}
+
 export function validateStep(step, draft) {
   if (step === 1) return !!draft.tipo;
   if (step === 2) return draft.disciplinas.length > 0;
@@ -12,8 +25,7 @@ export function validateStep(step, draft) {
     if (min < 1 || max < min) return false;
 
     if (draft.tipo === 'ciclo') {
-      const hs = parseFloat(draft.horarios.horasSemanais) || 0;
-      return hs > 0;
+      return resolveCicloHoras(draft) > 0;
     } else {
       let hasTime = false;
       for (let i = 0; i < 7; i++) {

@@ -19,3 +19,8 @@
 - Causa da Home sem "Próxima ação": `getNextSuggestedLesson` (src/js/logic/progress.js) olha só `aulas`; os JSONs tinham `aulas: []`.
 - Correção: uma aula por tópico em ambos os JSONs; teste `tests/unit/editais-json.test.js` garante isso e a validação do importador.
 - Agenda diária só existe com Planejamento ativo (Ciclo/Semanal/Reta Final); app usa um edital principal por vez (outros ficam arquivados).
+
+## Atualização — calendário do planejamento e meta do ciclo
+- Bug: `dispatcher.js` chamava `preventDefault()` no clique de qualquer `[data-action]`, inclusive `<input type="date">`, impedindo o seletor nativo. Agora campos date/time/datetime-local/month/week são ignorados no click (a ação roda no `change`).
+- Meta de horas do Ciclo agora é opcional: `resolveCicloHoras` (src/js/planejamento/validation.js) = meta informada, ou dias ativos × matérias/dia × sessão máxima (h). Usado em `generatePlanejamento` e na validação do passo 4 (exige ao menos 1 dia ativo se a meta estiver vazia).
+- Testes: actions-dispatcher, planejamento-validation. Suíte unit completa: 3067 passando.

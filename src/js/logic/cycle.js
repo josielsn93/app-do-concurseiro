@@ -11,6 +11,7 @@ import {
   reconcileSequenceWithEvents,
 } from './cycle-progress.js?v=8.37';
 import { syncRetaFinalToEventos } from './reta-final.js';
+import { resolveCicloHoras } from '../planejamento/validation.js';
 
 // Re-export: consumidores (logic.js, views) continuam importando daqui.
 export { distributeStudiedAcrossSeq };
@@ -157,8 +158,7 @@ export function generatePlanejamento(draft) {
   let totalMinutes = 0;
 
   if (plan.tipo === 'ciclo') {
-    const horasSemanais = parseFloat(plan.horarios.horasSemanais) || 0;
-    totalMinutes = horasSemanais * 60;
+    totalMinutes = resolveCicloHoras(draft) * 60;
   } else if (plan.tipo === 'semanal') {
     for (let i = 0; i < 7; i++) {
       const hora = plan.horarios.horasPorDia[i];

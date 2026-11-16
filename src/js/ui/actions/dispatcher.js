@@ -12,6 +12,8 @@ import { debugLog } from '../../debug.js?v=8.37';
  */
 const actions = {};
 
+const NATIVE_PICKER_TYPES = new Set(['date', 'time', 'datetime-local', 'month', 'week']);
+
 /**
  * Register a new action handler
  * @param {string} name - Action name (matches data-action attribute)
@@ -33,6 +35,12 @@ export function setupActionDispatcher() {
 
     // Don't prevent default on select elements - it breaks the dropdown UI
     if (target.tagName === 'SELECT') {
+      return;
+    }
+
+    // Campos de data/hora: o clique no ícone precisa abrir o seletor nativo.
+    // Bloquear o clique impede o calendário; a ação roda pelo evento 'change'.
+    if (target.tagName === 'INPUT' && NATIVE_PICKER_TYPES.has(target.type)) {
       return;
     }
 

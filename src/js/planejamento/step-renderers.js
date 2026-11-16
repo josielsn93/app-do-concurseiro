@@ -283,9 +283,9 @@ export function htmlStep4(draft) {
             <div class="pw-config-card">
                 <h4 class="pw-config-heading">Meta do Ciclo</h4>
                 <div class="mb-6">
-                    <label class="form-label">Total de horas para Fechar um Ciclo inteiro</label>
-                    <input type="number" step="0.5" class="form-control" placeholder="Ex: 30" value="${draft.horarios.horasSemanais}" data-action="pw-update-hours" data-field="horasSemanais">
-                    <p class="text-base text-muted mt-2">Quando você atingir essas X horas estudadas, use o botão Recomeçar Ciclo para fechar a rodada e repetir as matérias. É comum alinhar as horas do ciclo com as suas de estudo semanal, mas no Ciclo, o Carga Horária independe dos dias solares.</p>
+                    <label class="form-label">Total de horas de um Ciclo (opcional)</label>
+                    <input type="number" step="0.5" class="form-control" placeholder="Deixe vazio para calcular sozinho" value="${draft.horarios.horasSemanais}" data-action="pw-update-hours" data-field="horasSemanais">
+                    <p class="text-base text-muted mt-2">Em branco, o app calcula sozinho: dias de estudo × matérias por dia × sessão máxima, e divide o tempo entre as matérias conforme a relevância. Preencha só se quiser uma rodada maior ou menor. Ao completar as horas, use Recomeçar Ciclo para repetir as matérias.</p>
                 </div>
 
                 <label class="form-label">Quais dias de sol você pretende estudar? (Apenas para estimativas)</label>

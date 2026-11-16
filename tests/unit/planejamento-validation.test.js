@@ -2,11 +2,13 @@ import { describe, it, expect, vi } from 'vitest';
 
 describe('planejamento/validation.js', () => {
   let validateStep;
+  let resolveCicloHoras;
 
   beforeEach(async () => {
     vi.resetModules();
     const mod = await import('../../src/js/planejamento/validation.js');
     validateStep = mod.validateStep;
+    resolveCicloHoras = mod.resolveCicloHoras;
   });
 
   describe('module exports', () => {
@@ -98,6 +100,40 @@ describe('planejamento/validation.js', () => {
       it('accepts float horasSemanais', () => {
         const draft = createDraft({ tipo: 'ciclo', horarios: { horasSemanais: '15.5' } });
         expect(validateStep(4, draft)).toBe(true);
+      });
+    });
+
+    describe('tipo "ciclo" sem meta de horas (calculada automaticamente)', () => {
+      it('é válido quando a meta está vazia mas há dias de estudo escolhidos', () => {
+        const draft = createDraft({ tipo: 'ciclo', horarios: { diasAtivos: [1, 2, 3, 4, 5] } });
+        draft.materiasPorDia = 3;
+        expect(validateStep(4, draft)).toBe(true);
+      });
+
+      it('é inválido quando a meta está vazia e nenhum dia foi escolhido', () => {
+        const draft = createDraft({ tipo: 'ciclo' });
+        draft.materiasPorDia = 3;
+        expect(validateStep(4, draft)).toBe(false);
+      });
+    });
+
+    describe('resolveCicloHoras', () => {
+      it('usa a meta informada quando existe', () => {
+        const draft = createDraft({ tipo: 'ciclo', horarios: { horasSemanais: '25', diasAtivos: [1] } });
+        draft.materiasPorDia = 3;
+        expect(resolveCicloHoras(draft)).toBe(25);
+      });
+
+      it('sem meta: dias ativos × matérias por dia × sessão máxima (em horas)', () => {
+        const draft = createDraft({ tipo: 'ciclo', horarios: { diasAtivos: [1, 2, 3, 4, 5] } });
+        draft.materiasPorDia = 3;
+        expect(resolveCicloHoras(draft)).toBe(30);
+      });
+
+      it('retorna 0 sem meta e sem dias ativos', () => {
+        const draft = createDraft({ tipo: 'ciclo' });
+        draft.materiasPorDia = 3;
+        expect(resolveCicloHoras(draft)).toBe(0);
       });
     });
 
