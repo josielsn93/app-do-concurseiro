@@ -61,3 +61,4 @@
 - Teste de conteúdo agora cobre as siglas PP e DA (30 arquivos). Gerador em `privado/` ajustado para unidades de 60 min em um dos blocos. Nenhum JSON regenerado; pendentes as demais matérias antes de regenerar.
 - Teste de conteúdo agora cobre as siglas PP, PC e DA (61 testes, todos verdes). O gerador em `privado/` teve os slots de um dos blocos divididos em unidades de 60 min. Nenhum JSON regenerado. Pendente: demais matérias, depois regenerar, rodar suíte e reimportar.
 - Teste de conteúdo estendido para DP (11 arquivos): 72 testes passando. Slots de 120 min de DP divididos em unidades de 60 min no gerador (sem regenerar JSON). Restam as demais disciplinas; só então regenerar, rodar a suíte e reimportar.
+- Teste de conteúdo estendido para LI parcial (LI-00 e LI-02, 6 arquivos): 78 testes passando. Slots de 120 min de LI-0 e LI-2 divididos no gerador. LI-1, LI-3 e LI-4 pendentes (dependem de textos-fonte). Nenhum JSON regenerado.
