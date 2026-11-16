@@ -59,3 +59,4 @@
 - Novo teste `tests/unit/conteudo-aulas-privado.test.js`: valida a estrutura (seções, 5 questões A–E com gabarito, tamanho) dos arquivos de aula listados por sigla; pulado quando `privado/` não existe.
 - Por decisão do usuário, nenhum JSON é regenerado até todas as matérias terem aulas escritas; depois: rodar o gerador, testes e reimportar.
 - Teste de conteúdo agora cobre as siglas PP e DA (30 arquivos). Gerador em `privado/` ajustado para unidades de 60 min em um dos blocos. Nenhum JSON regenerado; pendentes as demais matérias antes de regenerar.
+- Teste de conteúdo agora cobre as siglas PP, PC e DA (61 testes, todos verdes). O gerador em `privado/` teve os slots de um dos blocos divididos em unidades de 60 min. Nenhum JSON regenerado. Pendente: demais matérias, depois regenerar, rodar suíte e reimportar.
