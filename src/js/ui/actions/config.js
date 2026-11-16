@@ -110,7 +110,7 @@ registerAction('request-notification-permission', () => {
 });
 registerAction('test-notification', () => {
   if ('Notification' in window) {
-    new Notification('Estudo Organizado', { body: 'Notificações funcionando!', icon: '📚' });
+    new Notification('App de estudos', { body: 'Notificações funcionando!', icon: '📚' });
     showToast('Lembretes enviados!', 'success');
   }
 });

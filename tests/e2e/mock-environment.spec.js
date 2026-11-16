@@ -4,7 +4,7 @@ test.describe('Mock Environment', () => {
   test('app boots with mock data and renders home view', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page.locator('#topbar-title')).toHaveText('Página Inicial');
+    await expect(page.locator('#topbar-title')).toHaveText(/^(Bom dia|Boa tarde|Boa noite), Josiel$/);
     await expect(page.locator('#main-content')).toContainText('TEMPO DE ESTUDO');
   });
 
@@ -134,7 +134,7 @@ test.describe('Mock Environment', () => {
     await page.goto('/');
 
     // Home must be usable immediately.
-    await expect(page.locator('#topbar-title')).toHaveText('Página Inicial');
+    await expect(page.locator('#topbar-title')).toHaveText(/^(Bom dia|Boa tarde|Boa noite), Josiel$/);
     await expect(page.locator('#main-content')).toContainText('TEMPO DE ESTUDO');
 
     // No blocking modal overlay should be open on first load.
@@ -146,7 +146,7 @@ test.describe('Mock Environment', () => {
 
   test('data persists after page reload', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('#topbar-title')).toHaveText('Página Inicial');
+    await expect(page.locator('#topbar-title')).toHaveText(/^(Bom dia|Boa tarde|Boa noite), Josiel$/);
     await expect(page.locator('#main-content')).toContainText('TEMPO DE ESTUDO');
 
     // Capture initial content
@@ -155,7 +155,7 @@ test.describe('Mock Environment', () => {
 
     // Reload the page
     await page.reload();
-    await expect(page.locator('#topbar-title')).toHaveText('Página Inicial');
+    await expect(page.locator('#topbar-title')).toHaveText(/^(Bom dia|Boa tarde|Boa noite), Josiel$/);
     await expect(page.locator('#main-content')).toContainText('TEMPO DE ESTUDO', { timeout: 10000 });
 
     // Data should still be present (mock server re-injects on each request)

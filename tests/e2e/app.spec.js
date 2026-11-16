@@ -28,7 +28,7 @@ async function openSyncSourceAdvanced(page, sourceId) {
   return source;
 }
 
-test.describe('Estudo Organizado', () => {
+test.describe('App de estudos', () => {
   test('boots the app and renders the home dashboard from seeded state', async ({ page }) => {
     const state = createE2EState();
     state.eventos.push({
@@ -49,7 +49,7 @@ test.describe('Estudo Organizado', () => {
     await seedLegacyState(page, state);
     await page.goto('/');
 
-    await expect(page.locator('#topbar-title')).toHaveText('Página Inicial');
+    await expect(page.locator('#topbar-title')).toHaveText(/^(Bom dia|Boa tarde|Boa noite), Josiel$/);
     await expect(page.locator('#main-content')).toContainText('TEMPO DE ESTUDO');
     await expect(page.locator('#main-content')).toContainText('01:30:00');
     await expect(page.locator('#main-content')).toContainText('PREVISÃO DA SEMANA');
@@ -132,7 +132,7 @@ test.describe('Estudo Organizado', () => {
     await seedLegacyState(page, state);
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto('/');
-    await expect(page.locator('#topbar-title')).toHaveText('Página Inicial');
+    await expect(page.locator('#topbar-title')).toHaveText(/^(Bom dia|Boa tarde|Boa noite), Josiel$/);
 
     for (const view of [
       { name: 'med', title: 'Study Organizer', emptySelector: '.med-empty-state' },
@@ -520,7 +520,7 @@ test.describe('Estudo Organizado', () => {
 
     await seedLegacyState(page, state);
     await page.goto('/');
-    await expect(page.locator('#topbar-title')).toHaveText('Página Inicial');
+    await expect(page.locator('#topbar-title')).toHaveText(/^(Bom dia|Boa tarde|Boa noite), Josiel$/);
 
     const views = [
       { selector: '[data-view="med"]', title: 'Study Organizer' },

@@ -131,7 +131,7 @@ export function importData() {
         const validation = validateBackupPayload(imported);
         if (!hasValidStructure || !validation.ok) {
           showToast(
-            'Arquivo inválido! Este JSON não parece ser um backup do Estudo Organizado.',
+            'Arquivo inválido! Este JSON não parece ser um backup do App de estudos.',
             'error'
           );
           return;
@@ -153,7 +153,7 @@ export function importData() {
         });
       } catch {
         showToast(
-          'Arquivo inválido! Verifique se é um JSON de backup do Estudo Organizado.',
+          'Arquivo inválido! Verifique se é um JSON de backup do App de estudos.',
           'error'
         );
       }

@@ -27,3 +27,10 @@
 - Trilha "Tribunais (nacional)" removida (trazia concursos de outros estados); adicionada consulta de TRF4/TRT-4 na trilha do Sul.
 - Itens antigos do `radar.json` que não passam nos critérios novos são descartados na próxima execução.
 - Pendente: avaliar se a lista de fontes confiáveis está restrita demais depois de uma semana real de envios.
+
+## Atualização (Pages e identidade do app, mesmo dia)
+- App publicado no GitHub Pages por `.github/workflows/pages.yml` (pasta `src/`); manifest com `id` e `scope` relativos. URL: https://josielsn93.github.io/app-do-concurseiro/
+- Nome visível trocado de "Estudo Organizado" para "App de estudos" (título, marca lateral, manifest, notificação, mensagens de backup).
+- Título da Página Inicial agora é a saudação por hora ("Bom dia/Boa tarde/Boa noite, Josiel") em `src/js/logic/greeting.js`; o nome fica na constante `GREETING_NAME`.
+- Import de edital continua só por arquivo JSON (`edital-import.js` aceita `.json`) e cobre disciplinas, tópicos e aulas; não lê datas nem requisitos, e não lê PDF.
+- Testes e2e (Playwright) ajustados para a saudação, mas não foram executados neste ambiente (sem navegador do Playwright).

@@ -29,7 +29,7 @@ test.describe('Sync E2E: No freeze during rapid navigation', () => {
     await seedState(page, state);
     await page.goto('/');
 
-    await expect(page.locator('#topbar-title')).toHaveText('Página Inicial');
+    await expect(page.locator('#topbar-title')).toHaveText(/^(Bom dia|Boa tarde|Boa noite), Josiel$/);
 
     // Navigate through key views rapidly
     const views = [

@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Estudo Organizado",
-  "short_name": "Estudo",
+  "name": "App de estudos",
+  "short_name": "App de estudos",
   "description": "Aplicativo de Metodologia de Estudo e Organização do Ciclo Contínuo",
   "start_url": "./index.html",
   "scope": "./",

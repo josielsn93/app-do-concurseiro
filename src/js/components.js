@@ -1,4 +1,5 @@
 import { currentView } from './app.js?v=8.37';
+import { getGreeting } from './logic/greeting.js?v=8.37';
 import {
   formatDate,
   formatTime,
@@ -384,7 +385,7 @@ export function renderCurrentView() {
   // Keep a consistent vertical spacing rhythm between top-level blocks per view.
   el.classList.toggle('main-content-stack', currentView !== 'cronometro');
   const titles = {
-    home: 'Página Inicial',
+    home: getGreeting(),
     med: 'Study Organizer',
     calendar: 'Calendário',
     revisoes: 'Revisões Pendentes',
@@ -400,7 +401,7 @@ export function renderCurrentView() {
     'pontos-fracos': 'Pontos Fracos',
   };
   const titleEl = document.getElementById('topbar-title');
-  if (titleEl) titleEl.textContent = titles[currentView] || 'Estudo Organizado';
+  if (titleEl) titleEl.textContent = titles[currentView] || 'App de estudos';
 
   const dateEl = document.getElementById('topbar-date');
   if (dateEl) {

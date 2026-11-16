@@ -217,10 +217,10 @@ describe('components.js', () => {
         return null;
       });
 
-      // Testa que a view home atualiza o título
+      // Na view home o título é a saudação conforme a hora do dia
       global.window.currentView = 'home';
       components.renderCurrentView();
-      expect(titleEl.textContent).toBe('Página Inicial');
+      expect(titleEl.textContent).toMatch(/^(Bom dia|Boa tarde|Boa noite), Josiel$/);
     });
 
     it('mostra botão "Iniciar Estudo" nas views home, med e calendar', () => {
