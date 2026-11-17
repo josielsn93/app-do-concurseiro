@@ -9,6 +9,7 @@
 import { esc, todayStr } from "../utils.js?v=8.37";
 import { state } from "../store.js?v=8.37";
 import { getDisc } from "../logic.js?v=8.37";
+import { renderLessonNotes } from "../ui/event-detail-view.js?v=8.37";
 
 const STATUS_LABEL = {
   pendente: "Pendente",
@@ -120,6 +121,19 @@ function renderEventos(block, events) {
   );
 }
 
+/** Roteiro da aula (notas importadas), ou "" quando o bloco não tem aula. */
+function renderAula(block) {
+  const notas = typeof block.notas === "string" ? block.notas.trim() : "";
+  if (!notas) return "";
+  return (
+    '<section class="rf-detail-section rf-detail-aula" data-field="aula" aria-label="Roteiro da aula">' +
+    '<div class="lesson">' +
+    renderLessonNotes(notas) +
+    "</div>" +
+    "</section>"
+  );
+}
+
 function metaRow(label, value) {
   if (!value) return "";
   return (
@@ -180,6 +194,7 @@ export function renderRetaFinalBlockDetail(block, options = {}) {
     "</span>" +
     (naoAlocado ? '<span class="rf-status-badge">Não alocado</span>' : "") +
     "</header>" +
+    renderAula(block) +
     '<section class="rf-detail-section" data-field="topicos" aria-labelledby="rf-detail-topicos-title">' +
     '<h4 class="rf-detail-section-title" id="rf-detail-topicos-title">Conteúdo</h4>' +
     renderTopicos(block, disc) +
@@ -296,7 +311,11 @@ export function openRetaFinalBlockDetail(blockId, options = {}) {
   overlay.dataset.rfDetailOverlay = "";
   overlay.innerHTML =
     '<button type="button" class="rf-detail-backdrop" data-action="rf-close-detail" aria-label="Fechar detalhes"></button>' +
-    '<div class="rf-detail-panel" data-rf-detail-panel role="dialog" aria-modal="true" aria-labelledby="rf-detail-title" tabindex="-1">' +
+    '<div class="rf-detail-panel' +
+    (typeof block.notas === "string" && block.notas.trim()
+      ? " rf-detail-panel--aula"
+      : "") +
+    '" data-rf-detail-panel role="dialog" aria-modal="true" aria-labelledby="rf-detail-title" tabindex="-1">' +
     renderRetaFinalBlockDetail(block, {
       disciplina: discEntry,
       events: eventos,
