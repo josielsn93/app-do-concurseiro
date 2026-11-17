@@ -97,6 +97,10 @@ const LEGACY_PLAN_MISMATCH_REASON =
 // Specific procedures for causes that fail closed. They explain what changed
 // and what the operator must do; the write path itself is unchanged.
 const RETA_FINAL_CONFLICT_GUIDANCE = {
+  lineage:
+    "Este aparelho e a nuvem tem o mesmo plano com identidades diferentes (o arquivo foi importado em dois aparelhos). Clique em Baixar para usar o plano da nuvem neste aparelho. Importe o plano em um aparelho so.",
+  "missing-local-plan":
+    "A nuvem ja tem um plano e este aparelho nao. Clique em Baixar para trazer o plano da nuvem.",
   "adoption-base":
     "O documento legado do Firestore mudou depois da leitura (payloadUpdatedAt diferente). Nada foi gravado. Sincronize para reler o documento, confirme que o planejamento continua equivalente e so entao publique a adocao.",
   "plan-digest-mismatch":
@@ -1265,6 +1269,26 @@ function applyRetaFinalPull(remote, config, { force = false } = {}) {
       basePlan: adoption.plan,
       localIdentity,
       nextState: legacyAdoptionNextState(remote, force),
+    };
+  }
+  // "Baixar dados" is the explicit choice "the cloud wins". Without this a
+  // device whose plan has another identity (the same file imported on two
+  // devices) had no way out: pull said "lineage" and push is blocked by the
+  // rules, so the conflict could never be resolved.
+  if (
+    force &&
+    remotePlan &&
+    remoteDescriptor &&
+    (!localPlan ||
+      remotePlan.planId !== localPlan.planId ||
+      (localPlan.ativo === true) !== (remotePlan.ativo === true))
+  ) {
+    return {
+      handled: true,
+      applied: true,
+      nextState: applyEnvelopeToLocalState(remote, config),
+      basePlan: remotePlan,
+      localIdentity,
     };
   }
   if (!remotePlan && localPlan)

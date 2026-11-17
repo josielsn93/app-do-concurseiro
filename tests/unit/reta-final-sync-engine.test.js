@@ -976,6 +976,38 @@ describe("reta-final sync engine integration", () => {
     expect(outbox.markFirestoreSnapshotSynced).toHaveBeenCalled();
   });
 
+  it("lets a forced pull replace a local plan from another lineage with the cloud plan", async () => {
+    const localPlan = makePlan({ planId: "plan-local", revision: 1 });
+    const remotePlan = makePlan({ planId: "plan-nuvem", revision: 3 });
+    const remote = envelopeFor(remotePlan, { revision: 3, baseRevision: 2 });
+    await boot({ plan: localPlan, basePlan: localPlan, remote });
+
+    const blocked = await engine.pullFromFirestore(false);
+    expect(blocked).toBe(false);
+    expect(storeModule.state.planejamento.planId).toBe("plan-local");
+
+    const accepted = await engine.pullFromFirestore(true, {
+      discardPending: true,
+    });
+
+    expect(accepted).toBe(true);
+    expect(storeModule.state.planejamento.planId).toBe("plan-nuvem");
+    expect(storeModule.state.config.firestoreSync.conflict).toBeNull();
+  });
+
+  it("lets a forced pull bring the cloud plan to a device that has none", async () => {
+    const remotePlan = makePlan({ planId: "plan-nuvem", revision: 3 });
+    const remote = envelopeFor(remotePlan, { revision: 3, baseRevision: 2 });
+    await boot({ plan: null, basePlan: null, remote });
+
+    const accepted = await engine.pullFromFirestore(true, {
+      discardPending: true,
+    });
+
+    expect(accepted).toBe(true);
+    expect(storeModule.state.planejamento.planId).toBe("plan-nuvem");
+  });
+
   it("clears pending and reports synced on a forced v2 no-op with discardPending", async () => {
     const basePlan = makePlan({ revision: 1 });
     const localPlan = makePlan({ revision: 2, minutos: 40 });

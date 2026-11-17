@@ -82,3 +82,9 @@
 - `firestoreSignIn` e a conclusão do redirect chamam `ensureSyncEnabledAfterSignIn` (liga `primary` se o canal estava desligado; mantém o modo já escolhido). A ação `firestore-sign-in` re-renderiza a view após o login.
 - O sync continua manual (sem polling automático), por desenho herdado do fork. Pendente, se o usuário quiser: pull automático ao abrir/voltar ao app.
 - Testes: `tests/unit/firestore-sign-in-cancel.test.js` (+3).
+
+## "Baixar" resolve conflito de linhagem
+
+- Causa do beco sem saída: o mesmo JSON importado em dois aparelhos gera `planId` diferentes; pull dava `lineage`, push é barrado pelas regras (CAS), e o "Baixar" forçado também recusava.
+- `applyRetaFinalPull` (`firestore-sync-engine.js`): com `force` (Baixar), a nuvem vence quando o plano local não existe, tem outro `planId` ou outro estado ativo. Mensagens de orientação para `lineage` e `missing-local-plan`.
+- Regra de uso: importar o plano em um aparelho só; os demais só baixam. Testes: `reta-final-sync-engine.test.js` (+2). Suíte: 3.272.
