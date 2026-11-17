@@ -12,7 +12,7 @@
  * app, o fluxo volta a ser same-origin. Ver issue #99.
  */
 
-const FIREBASE_AUTH_HOST = 'app-de-estudos-14564.firebaseapp.com';
+const FIREBASE_AUTH_HOST = 'app-do-concurseiro.firebaseapp.com';
 const RESERVED_PREFIX = '/__/';
 
 export default {
