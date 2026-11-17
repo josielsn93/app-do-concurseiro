@@ -5,8 +5,14 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // Single-user app: only the owner's Google account may use this project.
+    // Other accounts can sign in to the page but get no access to any data.
+    function isAppOwner() {
+      return signedIn() && request.auth.uid == 'tSPFagkJtBRaMm332MY5KujyKZw1';
+    }
+
     function owns(uid) {
-      return signedIn() && request.auth.uid == uid;
+      return isAppOwner() && request.auth.uid == uid;
     }
 
     function validRetaFinalCapabilities(capabilities) {

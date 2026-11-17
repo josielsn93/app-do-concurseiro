@@ -72,6 +72,7 @@ beforeEach(async () => {
   vi.useFakeTimers();
 
   document.body.innerHTML = `
+    <div class="sidebar-drive" hidden></div>
     <div id="drive-dot"></div>
     <div id="drive-label"></div>
     <div id="drive-sublabel"></div>
@@ -124,6 +125,19 @@ describe('drive-sync.js', () => {
 
       expect(dot.className).toBe('drive-dot syncing');
       expect(btn.disabled).toBe(true);
+    });
+
+    it('mantém o rodapé do Drive escondido para quem nunca conectou', () => {
+      store.state.driveFileId = null;
+      driveSync.updateDriveUI('disconnected', 'Google Drive');
+      expect(document.querySelector('.sidebar-drive').hidden).toBe(true);
+    });
+
+    it('mostra o rodapé do Drive para quem já conectou', () => {
+      store.state.driveFileId = 'drive-file-id';
+      driveSync.updateDriveUI('connected', 'Google Drive');
+      expect(document.querySelector('.sidebar-drive').hidden).toBe(false);
+      store.state.driveFileId = null;
     });
 
     it('atualiza UI para estado disconnected', () => {

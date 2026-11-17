@@ -109,3 +109,4 @@ src/js/firebase/firebase-config.js
 *cronograma*.json
 *edital*.json
 !/src/**/*cronograma*.json
+dist/

@@ -141,4 +141,34 @@ describe('service worker fetch routing', () => {
       { ignoreSearch: true },
     ]);
   });
+
+  it('serves app scripts and styles from the network first so a new page never runs old code', async () => {
+    const onFetch = await loadServiceWorker();
+    const fresh = { ok: true, clone: () => ({}), body: 'new' };
+    globalThis.fetch = vi.fn(() => Promise.resolve(fresh));
+    shellCache.match.mockImplementation(() => Promise.resolve({ body: 'old' }));
+    globalThis.caches.match = vi.fn(() => Promise.resolve({ body: 'old' }));
+
+    for (const [path, destination] of [
+      ['/js/app.js?v=8.37', 'script'],
+      ['/css/styles.css?v=9.86', 'style'],
+    ]) {
+      const evt = fakeEvent(path, { destination });
+      onFetch(evt);
+      await expect(evt.respondWith.mock.calls[0][0]).resolves.toBe(fresh);
+    }
+  });
+
+  it('serves content-hashed build assets from the cache without touching the network', async () => {
+    const onFetch = await loadServiceWorker();
+    const cached = { body: 'bundle' };
+    globalThis.caches.match = vi.fn(() => Promise.resolve(cached));
+    globalThis.fetch = vi.fn(() => Promise.reject(new Error('should not fetch')));
+    const evt = fakeEvent('/assets/app-7HQ2KD9X.js', { destination: 'script' });
+
+    onFetch(evt);
+
+    await expect(evt.respondWith.mock.calls[0][0]).resolves.toBe(cached);
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
 });

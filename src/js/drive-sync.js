@@ -76,6 +76,10 @@ export function updateDriveUI(status, label) {
   const btn = document.getElementById('drive-action-btn');
   const area = document.getElementById('drive-status-area');
 
+  // The sidebar footer only appears for someone who already uses Drive.
+  const footer = document.querySelector('.sidebar-drive');
+  if (footer) footer.hidden = !state.driveFileId && status !== 'syncing';
+
   if (!dot) return;
 
   dot.className = `drive-dot ${status}`;

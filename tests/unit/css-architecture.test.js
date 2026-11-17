@@ -127,6 +127,8 @@ describe('CSS architecture', () => {
     const stylesheetHrefs = [...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map((match) => match[1]);
 
     expect(stylesheetHrefs).toEqual([
+      expect.stringContaining('vendor/fontawesome/css/all.min.css'),
+      expect.stringContaining('css/fonts.css'),
       expect.stringContaining('css/tokens.css'),
       expect.stringContaining('css/base.css'),
       expect.stringContaining('css/components.css'),

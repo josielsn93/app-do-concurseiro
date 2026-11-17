@@ -97,6 +97,7 @@ test.describe('Sync entre dispositivos (merge)', () => {
   test('exclusão e slot perdido no dispositivo A propagam para o B sem ressuscitar nada', async ({
     browser,
   }) => {
+    test.skip(process.env.E2E_ROOT === 'dist', 'importa módulos do código-fonte direto no navegador');
     // ---------- Dispositivo A ----------
     const ctxA = await browser.newContext();
     const pageA = await ctxA.newPage();
