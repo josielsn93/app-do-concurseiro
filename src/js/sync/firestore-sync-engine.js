@@ -119,6 +119,9 @@ function isBlockingFirestoreConflict(conflict) {
 // with a material one. Any pending outbox still blocks this recovery.
 const RECOVERABLE_RETA_FINAL_CAUSES = new Set([
   "missing-remote-plan",
+  // The legacy document changed between the read and the adoption write. The
+  // outbox is re-based onto the document just read when that is provably safe.
+  "adoption-base",
   // A 9.76 client could persist an `outbox-rebase-unsafe` produced by a raw
   // plan comparison (projection drift). It must be re-evaluated by the normal
   // path: a safe rebase repairs it, and a real divergence is registered again
@@ -951,6 +954,90 @@ async function acknowledgeAlreadyAppliedOutbox(pending, remote, uid, config) {
   });
   emitStatus("synced");
   return true;
+}
+
+const ACADEMIC_COLLECTIONS_FOR_ADOPTION = [
+  "eventos",
+  "editais",
+  "disciplinas",
+  "arquivo",
+  "revisoes",
+];
+
+function remoteHasAcademicItemsMissingFrom(pendingPayload, remotePayload) {
+  for (const key of ACADEMIC_COLLECTIONS_FOR_ADOPTION) {
+    const pendingIds = new Set(
+      (Array.isArray(pendingPayload?.[key]) ? pendingPayload[key] : []).map(
+        (item) => item?.id,
+      ),
+    );
+    const remoteList = Array.isArray(remotePayload?.[key])
+      ? remotePayload[key]
+      : [];
+    if (remoteList.some((item) => item?.id && !pendingIds.has(item.id))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * A legacy document that changed after the adoption was queued (another device
+ * wrote to it) only invalidates the CAS base. When the new document holds no
+ * Reta Final v2 plan, an equivalent legacy plan at most, and nothing academic
+ * that the adoption would overwrite, the same operation is re-based onto it.
+ */
+async function rebaseLegacyAdoptionBase(pending, remote) {
+  const descriptor = readRetaFinalSyncDescriptor(pending?.envelope);
+  if (
+    !descriptor ||
+    descriptor.baseRevision !== 0 ||
+    descriptor.snapshotRevision !== 1 ||
+    descriptor.baseSnapshotRevision !== 0 ||
+    descriptor.state !== "active"
+  ) {
+    return { status: "not-applicable" };
+  }
+  if (!remote || Object.hasOwn(remote, "retaFinalSync")) {
+    return { status: "not-applicable" };
+  }
+  const newBase = remote.payloadUpdatedAt;
+  if (typeof newBase !== "string" || !newBase) {
+    return { status: "not-applicable" };
+  }
+  const pendingPlan = getRetaFinalPayloadPlan({
+    planejamento: pending.envelope?.payload?.planejamento,
+  });
+  if (!pendingPlan) return { status: "not-applicable" };
+  const legacy = assessLegacyRetaFinalWrite({
+    plan: pendingPlan,
+    remoteEnvelope: remote,
+  });
+  if (!legacy.allowed) return { status: "not-applicable" };
+  const pendingPayload = pending.envelope.payload || {};
+  const remotePayload = remote.payload || {};
+  if (
+    academicDivergences(pendingPayload, state, remotePayload).length ||
+    remoteHasAcademicItemsMissingFrom(pendingPayload, remotePayload)
+  ) {
+    return { status: "not-applicable" };
+  }
+  const envelope = {
+    ...pending.envelope,
+    baseRemoteUpdatedAt: newBase,
+    retaFinalSync: {
+      ...pending.envelope.retaFinalSync,
+      baseRemoteUpdatedAt: newBase,
+    },
+  };
+  const replaced = await replacePendingFirestoreSnapshotEnvelope(envelope, {
+    queuedAt: pending.queuedAt ?? null,
+    sentAt: pending.envelope?.sentAt ?? null,
+  });
+  return {
+    status: replaced ? "rebased" : "pending-changed",
+    pending: await getPendingFirestoreSnapshot(),
+  };
 }
 
 async function recoverStaleAdoptionOutbox(pending, remote, config) {
@@ -2445,6 +2532,32 @@ async function flushFirestoreOutboxUnlocked(options = {}) {
       envelope: pending.envelope,
       remoteEnvelope: remote,
     });
+    if (!decision.allowed && decision.reason === "adoption-base") {
+      const rebase = await rebaseLegacyAdoptionBase(pending, remote);
+      if (
+        (rebase.status === "rebased" || rebase.status === "pending-changed") &&
+        rebase.pending
+      ) {
+        pending = rebase.pending;
+        descriptor = readRetaFinalSyncDescriptor(pending.envelope);
+        if (!descriptor || descriptorPayloadMismatch(pending, descriptor, remote)) {
+          config.lastError =
+            "Envelope Reta Final nao corresponde ao plano local enviado.";
+          config.hasPendingWrites = true;
+          await markFirestoreSnapshotFailed(new Error(config.lastError));
+          await persistSyncConfig(true);
+          emitStatus("blocked-guard", {
+            reason: "descriptor-mismatch",
+            error: config.lastError,
+          });
+          return false;
+        }
+        decision = validateRetaFinalEnvelopeWrite({
+          envelope: pending.envelope,
+          remoteEnvelope: remote,
+        });
+      }
+    }
     if (!decision.allowed && RECOVERABLE_RETA_FINAL_REASONS.has(decision.reason)) {
       const recovery = await recoverStaleAdoptionOutbox(
         pending,
