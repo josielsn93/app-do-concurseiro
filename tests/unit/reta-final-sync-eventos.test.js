@@ -634,7 +634,7 @@ describe('notas importadas da Reta Final', () => {
     const evento = eventosDoBloco('rf_1')[0];
     expect(evento.notas).toBe(notas);
     expect(evento.rfNotasAutomaticas).toBe(notas);
-    expect(evento.updatedAt).toBe('2026-07-10T13:00:00.000Z');
+    expect(evento.updatedAt).toBe(new Date(HOJE + 'T10:00:00').toISOString());
     const snapshot = JSON.stringify(store.state);
 
     retaFinalMod.syncRetaFinalToEventos();
@@ -660,7 +660,7 @@ describe('notas importadas da Reta Final', () => {
     const merged = mergeStudyStates(local, remote);
 
     expect(merged.eventos[0].notas).toBe(notas);
-    expect(merged.eventos[0].updatedAt).toBe('2026-07-10T13:00:00.000Z');
+    expect(merged.eventos[0].updatedAt).toBe(new Date(HOJE + 'T10:00:00').toISOString());
 
     const snapshot = JSON.stringify(store.state.eventos[0]);
     retaFinalMod.syncRetaFinalToEventos();
