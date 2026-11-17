@@ -86,7 +86,7 @@ function renderBackupRestoreCard() {
         </div>
 
         <div class="backup-center-sources">
-          ${sources
+          ${visibleSyncSources(sources)
             .map(
               (source) => `
             <div class="backup-source-card" data-backup-source="${source.id}">
@@ -292,7 +292,9 @@ function getSyncHealthIcon(health) {
 }
 
 function renderCloudflareConflict(source) {
-  if (!source?.conflict) return "";
+  // Only the Cloudflare channel: its buttons pull/push Cloudflare, so showing
+  // this panel under a Firebase conflict sent people to the wrong channel.
+  if (source?.id !== "cloudflare" || !source?.conflict) return "";
   return `
     <div class="sync-conflict-panel" data-testid="cf-sync-conflict" role="alert">
       <div class="sync-conflict-header">
@@ -620,9 +622,22 @@ function renderSourceAdvancedBlock(source) {
   `;
 }
 
+// Cloudflare and Google Drive are legacy channels from the original project.
+// They stay visible only for someone who already configured them.
+function visibleSyncSources(sources, appState = state) {
+  const config = appState?.config || {};
+  const cloudflareUsed = Boolean(config.cfUrl || config.cfToken || config.cfSyncEnabled);
+  const driveUsed = Boolean(appState?.driveFileId);
+  return (sources || []).filter((source) => {
+    if (source?.id === "cloudflare") return cloudflareUsed;
+    if (source?.id === "drive") return driveUsed;
+    return true;
+  });
+}
+
 function renderQuietSyncCenterCard() {
   const model = buildCurrentSyncCenterModel();
-  const sources = (model.sources || []).filter(
+  const sources = visibleSyncSources(model.sources).filter(
     (source) => source && source.id !== "local",
   );
   const lastManualSyncAt = state.config?.lastManualSyncAt || null;
@@ -676,6 +691,7 @@ function renderQuietSyncCenterCard() {
 const renderBackupCenterCard = renderBackupRestoreCard;
 
 export {
+  visibleSyncSources,
   renderBackupRestoreCard,
   renderBackupCenterCard,
   renderAdvancedCard,

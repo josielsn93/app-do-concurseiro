@@ -4,6 +4,8 @@ const CACHE_NAME = `estudo-organizado-v${APP_VERSION}`;
 const ASSET_PATHS = [
   './',
   './index.html',
+  './vendor/fontawesome/css/all.min.css',
+  './css/fonts.css',
   './css/styles.css',
   './css/tokens.css',
   './css/base.css',
@@ -201,8 +203,10 @@ const ASSET_PATHS = [
 ];
 
 // Append version query string to cacheable assets (skip root path)
+// Content-hashed build files (./assets/app-XXXXXXXX.js) are requested without
+// a query string, so they are cached under their plain URL.
 const ASSETS = ASSET_PATHS.map((p) =>
-  p.includes('.') && p !== './' ? `${p}?v=${APP_VERSION}` : p
+  p.includes('.') && p !== './' && !p.startsWith('./assets/') ? `${p}?v=${APP_VERSION}` : p
 );
 
 function isShellAssetRequest(url) {
@@ -271,21 +275,29 @@ function networkFirst(request) {
     .catch(() => caches.match(request));
 }
 
-function staleWhileRevalidate(request) {
-  return caches.open(CACHE_NAME).then((cache) => {
-    // Frozen ES imports may request a path under an older query version than the PWA precache.
-    const cachedPromise = cache.match(request).then((cached) =>
-      cached || cache.match(request, { ignoreSearch: true })
-    );
-    const fetchPromise = fetch(request)
+// Network first for unhashed JS/CSS: a page must never mix a new index.html
+// with code from an older version (that is what left views unstyled after a
+// deploy). The cache is only the offline fallback; frozen ES import versions
+// (?v=8.37) still resolve to the precached file via ignoreSearch.
+function networkFirstAsset(request) {
+  return caches.open(CACHE_NAME).then((cache) =>
+    fetch(request)
       .then((res) => {
         if (res.ok) cache.put(request, res.clone());
         return res;
       })
-      .catch(() => cachedPromise);
+      .catch(() =>
+        cache
+          .match(request)
+          .then((cached) => cached || cache.match(request, { ignoreSearch: true }))
+      )
+  );
+}
 
-    return cachedPromise.then((cached) => cached || fetchPromise);
-  });
+// Build output carries its content hash in the file name (assets/app-XXXXXXXX.js),
+// so a cached copy can never be stale.
+function isHashedBuildAsset(url) {
+  return /\/assets\/[^/]+-[A-Z0-9]{8}\.[a-z0-9]+$/.test(url.pathname);
 }
 
 function cacheFirst(request) {
@@ -336,12 +348,17 @@ self.addEventListener('fetch', (evt) => {
     return;
   }
 
-  // Scripts and styles: stale-while-revalidate for speed
+  if (isHashedBuildAsset(url)) {
+    evt.respondWith(cacheFirst(evt.request));
+    return;
+  }
+
+  // Unhashed scripts and styles: network first, cache only when offline.
   if (dest === 'script' || dest === 'style') {
     const request = isShellAssetRequest(url)
       ? new Request(evt.request, { cache: 'no-store' })
       : evt.request;
-    evt.respondWith(staleWhileRevalidate(request));
+    evt.respondWith(networkFirstAsset(request));
     return;
   }
 

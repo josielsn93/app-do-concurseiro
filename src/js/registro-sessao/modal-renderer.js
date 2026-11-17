@@ -150,7 +150,7 @@ export function renderRegistroForm({ ev, sessionStartTime, sessionEndTime, sessi
   const discOptions = allDiscs
     .map(
       (d) =>
-        `<option value="${d.disc.id}">${d.disc.icone || '📖'} ${d.disc.nome} — ${d.edital.nome}</option>`
+        `<option value="${esc(d.disc.id)}">${esc(d.disc.icone || '📖')} ${esc(d.disc.nome)} — ${esc(d.edital.nome)}</option>`
     )
     .join('');
 

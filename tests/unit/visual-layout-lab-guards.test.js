@@ -93,10 +93,11 @@ describe('lab guards — CSS anti-drift', () => {
     }
   });
 
-  it('o HTML do lab usa os mesmos CDNs de fonte/ícone do app', () => {
+  it('o HTML do lab usa as mesmas fontes e ícones locais do app', () => {
     const lab = readLab('visual-layout-lab.html');
-    expect(lab).toMatch(/fonts\.googleapis\.com/);
-    expect(lab).toMatch(/font-awesome/);
+    expect(lab).toContain('../vendor/fontawesome/css/all.min.css');
+    expect(lab).toContain('../css/fonts.css');
+    expect(lab).not.toMatch(/fonts\.googleapis\.com|cdnjs/);
   });
 });
 

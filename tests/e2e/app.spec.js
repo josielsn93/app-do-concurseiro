@@ -756,6 +756,7 @@ test.describe('App de estudos', () => {
   });
 
   test('SW precache includes all runtime module paths', async ({ page }) => {
+    test.skip(process.env.E2E_ROOT === 'dist', 'confere a lista de módulos do código-fonte; o build tem teste próprio');
     await page.goto('/');
     const assetPaths = await page.evaluate(() => {
       if ('serviceWorker' in navigator) {

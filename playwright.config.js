@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 18345;
+// E2E_ROOT=dist roda a mesma suíte contra o build de produção (npm run build).
+const E2E_ROOT = process.env.E2E_ROOT || 'src';
+const PORT = E2E_ROOT === 'src' ? 18345 : 18346;
 const BASE_URL = `http://127.0.0.1:${PORT}`;
 
 export default defineConfig({
@@ -26,7 +28,7 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: `npx http-server src -p ${PORT} -c-1`,
+      command: `npx http-server ${E2E_ROOT} -p ${PORT} -c-1`,
       url: BASE_URL,
       reuseExistingServer: true,
     },

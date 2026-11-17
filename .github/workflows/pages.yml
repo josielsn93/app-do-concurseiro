@@ -1,15 +1,20 @@
 name: Publicar app no GitHub Pages
 
-# Publica a pasta src/ (o app) em https://<usuario>.github.io/<repositorio>/.
+# Roda os testes unitários, gera o build de produção (scripts/build-site.mjs)
+# e publica a pasta dist/ em https://<usuario>.github.io/<repositorio>/.
+# Se um teste falhar, nada é publicado e o site continua na versão anterior.
 # Requer, uma vez: Settings > Pages > Build and deployment > Source = "GitHub Actions".
 # Tambem roda depois do "Auto cache bump", porque commits feitos com o GITHUB_TOKEN
-# nao disparam outros workflows e a versao com cache incrementado precisa ser publicada.
+# nao disparam outros workflows.
 
 on:
   push:
     branches: [main]
     paths:
       - 'src/**'
+      - 'scripts/build-site.mjs'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/pages.yml'
   workflow_run:
     workflows: ['Auto cache bump']
@@ -26,23 +31,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Testes unitários
+        run: npx vitest run --reporter=dot
+
+      - name: Build de produção
+        run: npm run build
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload dist/
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
   deploy:
+    needs: test-and-build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload app (src/)
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: src
-
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4

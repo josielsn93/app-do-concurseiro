@@ -94,3 +94,15 @@
 - Feita revisão de estrutura, sync, segurança, desempenho e UX; relatório entregue ao usuário fora do repositório.
 - Proposta em 4 fases, aguardando decisão do usuário: (1) estabilizar: regras só para o UID do dono, bundle único com hash + aviso de nova versão, ícones locais, testes no CI antes do Pages, fim do backup em localStorage; (2) sync novo: plano/progresso/aulas/preferências em documentos separados, onSnapshot e persistência offline do SDK, migração automática do snapshot atual; (3) interface com 5 telas (Hoje, Plano, Calendário, Desempenho, Ajustes); (4) limpeza (src/lab, worker, .bat, docs antigos, telas não usadas).
 - Nada foi iniciado. Não começar sem o aval do usuário.
+
+## Fase 1 (estabilizar) — branch `fase1-estabilizar`
+
+- `firestore.rules`: `isAppOwner()` restringe todo acesso ao UID do dono; o usuário precisa publicar o arquivo inteiro no console.
+- Build de produção `scripts/build-site.mjs` (`npm run build`): esbuild gera `dist/assets/app-<hash>.js` e `app-<hash>.css`, remove `?v=` dos imports (6 módulos eram carregados em duas instâncias), gera `dist/sw.js` com versão e precache do build. `dist/` no `.gitignore`.
+- `src/sw.js`: JS/CSS sem hash agora rede-primeiro (cache só offline); arquivos com hash em `/assets/` cache-primeiro e precache sem query.
+- Ícones (Font Awesome 6.4.0) e fontes (Plus Jakarta Sans, DM Mono) servidos de `src/vendor/`; CSP sem cdnjs/Google Fonts.
+- `.github/workflows/pages.yml`: `npm ci` → vitest → build → publica `dist/` (deploy só se testes passarem).
+- Interface: Cloudflare e Drive só aparecem se já configurados (`visibleSyncSources`); painel "Conflito Cloudflare" só no canal Cloudflare; rodapé do Drive escondido sem `driveFileId`; nomes escapados no seletor do registro de sessão.
+- `E2E_ROOT=dist` roda a suíte e2e contra o build (`npm run test:e2e:dist`).
+- Adiado para a fase 2: remover a cópia legada `main_state` e o backup de emergência no localStorage (lidos no boot e em `reta-final-commit.js`).
+- E2E neste ambiente: um grupo de testes já falhava na `main` (visuais de tema, importação de edital, offline-import, phase6) por corrida de boot/tempo; mesmas falhas na branch, sem regressão nova.

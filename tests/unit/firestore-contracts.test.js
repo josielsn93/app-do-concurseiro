@@ -283,6 +283,15 @@ describe('Firestore integration contracts', () => {
     expect(rules).toContain('request.resource.data.version == 1');
   });
 
+  it('only lets the app owner account read or write anything', () => {
+    const rules = read('firestore.rules');
+    const owns = rules.match(/function owns\(uid\) \{([\s\S]*?)\}/)?.[1] || '';
+
+    expect(rules).toMatch(/function isAppOwner\(\) \{\s*return signedIn\(\) && request\.auth\.uid == 'tSPFagkJtBRaMm332MY5KujyKZw1';/);
+    expect(owns).toContain('isAppOwner()');
+    expect(owns).toContain('request.auth.uid == uid');
+  });
+
   it('validates the Reta Final v2 descriptor inside the snapshot allowlist', () => {
     const rules = read('firestore.rules');
 

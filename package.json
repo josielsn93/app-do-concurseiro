@@ -30,6 +30,8 @@
     "bump:check": "node scripts/bump-cache.mjs --check",
     "prepare": "git config core.hooksPath .githooks",
     "build:firebase": "node scripts/build-firebase-bundle.mjs",
+    "build": "node scripts/build-site.mjs",
+    "test:e2e:dist": "npm run build && E2E_ROOT=dist playwright test --project=chromium --reporter=line",
     "context:map": "node scripts/context-map.mjs",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
@@ -42,6 +44,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@fontsource/dm-mono": "^5.3.0",
+    "@fontsource/plus-jakarta-sans": "^5.3.0",
+    "@fortawesome/fontawesome-free": "^6.4.0",
     "@playwright/test": "^1.54.2",
     "@vitest/coverage-v8": "^3.2.4",
     "esbuild": "^0.28.0",

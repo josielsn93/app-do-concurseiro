@@ -422,6 +422,28 @@ describe('unificação das seções duplicadas — resumo derivado no modo multi
     expect(padrao).toContain('value="em_andamento" selected');
   });
 
+  it('escapa nomes de disciplina e edital no seletor do registro', () => {
+    store.state.editais = [
+      {
+        id: 'ed_x',
+        nome: 'Edital & Cia',
+        disciplinas: [{ id: 'disc_x', nome: 'Português <img src=x onerror=alert(1)>', assuntos: [] }],
+      },
+    ];
+    const form = renderer.renderRegistroForm({
+      ev: { id: 'ev_x', discId: 'disc_x', tempoAcumulado: 0, sessao: {} },
+      sessionStartTime: null,
+      sessionEndTime: null,
+      sessionMode: 'cronometro',
+      selectedTipos: [],
+      selectedMateriais: [],
+      sessionTopicos: [],
+    });
+    expect(form).not.toContain('<img src=x');
+    expect(form).toContain('Português &lt;img src=x');
+    expect(form).toContain('Edital &amp; Cia');
+  });
+
   it('renderRegistroForm envolve o progresso em container re-renderizável', () => {
     const baseArgs = {
       ev: { id: 'ev_ui', discId: 'disc_a', tempoAcumulado: 0, sessao: {} },
