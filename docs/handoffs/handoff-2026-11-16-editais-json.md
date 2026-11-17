@@ -76,3 +76,9 @@
 - Sintoma: o envio da adoção do plano ficava na outbox com `baseRemoteUpdatedAt` antigo após outro navegador gravar um documento vazio; "Sincronizar"/"Enviar local" não faziam nada.
 - Correção em `src/js/sync/firestore-sync-engine.js`: `adoption-base` passou a ser causa recuperável e `rebaseLegacyAdoptionBase` reaponta a mesma operação para o documento recém-lido, só se o remoto não tem descritor v2, não há plano divergente e não há dado acadêmico a sobrescrever.
 - Testes novos em `tests/unit/reta-final-sync-engine.test.js` (3). Suíte completa: 3.267 passando.
+
+## Login ativa o sync no aparelho
+
+- `firestoreSignIn` e a conclusão do redirect chamam `ensureSyncEnabledAfterSignIn` (liga `primary` se o canal estava desligado; mantém o modo já escolhido). A ação `firestore-sign-in` re-renderiza a view após o login.
+- O sync continua manual (sem polling automático), por desenho herdado do fork. Pendente, se o usuário quiser: pull automático ao abrir/voltar ao app.
+- Testes: `tests/unit/firestore-sign-in-cancel.test.js` (+3).

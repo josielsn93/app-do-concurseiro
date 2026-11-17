@@ -1969,6 +1969,7 @@ export function initFirestoreSync() {
       syncConfig.uid = credential.user.uid;
       syncConfig.lastError = null;
       await persistSyncConfig(false);
+      await ensureSyncEnabledAfterSignIn();
       emitStatus("signed-in", {
         config: { uid: credential.user.uid, lastError: null },
       });
@@ -2068,6 +2069,15 @@ export function initFirestoreSync() {
   });
 }
 
+// Signing in on a device is the explicit request to sync it: without this the
+// channel stays "Inativo" and the sync button reports "no channels". A mode the
+// user already chose (shadow/primary) is kept.
+async function ensureSyncEnabledAfterSignIn() {
+  const config = getConfig();
+  if (config.enabled === true) return;
+  await enableFirestoreSync("primary");
+}
+
 export async function firestoreSignIn() {
   const credential = await signInWithGoogle();
   if (credential?.cancelled) {
@@ -2083,6 +2093,7 @@ export async function firestoreSignIn() {
   currentUser = credential.user;
   getConfig().uid = currentUser.uid;
   await persistSyncConfig(false);
+  await ensureSyncEnabledAfterSignIn();
 
   // Check and run entity migration if needed (one-time)
   try {

@@ -62,3 +62,39 @@ describe('firestoreSignIn cancellation handling', () => {
     expect(statusEvents()).not.toContain('redirecting');
   });
 });
+
+describe('firestoreSignIn activates sync on the device', () => {
+  async function currentSync() {
+    const store = await import('../../src/js/store.js?v=8.37');
+    return store.state.config.firestoreSync;
+  }
+
+  it('turns primary sync on after a successful explicit sign-in', async () => {
+    signInWithGoogle.mockResolvedValue({ user: { uid: 'u1' } });
+
+    await syncEngine.firestoreSignIn();
+
+    const sync = await currentSync();
+    expect(sync.enabled).toBe(true);
+    expect(sync.mode).toBe('primary');
+  });
+
+  it('keeps a mode the user already chose', async () => {
+    signInWithGoogle.mockResolvedValue({ user: { uid: 'u1' } });
+    await syncEngine.enableFirestoreSync('shadow');
+
+    await syncEngine.firestoreSignIn();
+
+    const sync = await currentSync();
+    expect(sync.enabled).toBe(true);
+    expect(sync.mode).toBe('shadow');
+  });
+
+  it('does not enable sync when the popup was cancelled', async () => {
+    signInWithGoogle.mockResolvedValue({ cancelled: true });
+
+    await syncEngine.firestoreSignIn();
+
+    expect((await currentSync()).enabled).not.toBe(true);
+  });
+});

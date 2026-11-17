@@ -132,7 +132,11 @@ registerAction('cloud-conflict-force-push', () => {
     { label: 'Forçar envio', title: 'Sobrescrever remoto', danger: true }
   );
 });
-registerAction('firestore-sign-in', firestoreSignIn);
+registerAction('firestore-sign-in', async () => {
+  const user = await firestoreSignIn();
+  if (user) renderCurrentView();
+  return user;
+});
 registerAction('firestore-sign-out', firestoreSignOut);
 registerAction('firestore-enable-primary', () => enableFirestoreSync('primary'));
 registerAction('firestore-enable-shadow', () => enableFirestoreSync('shadow'));
