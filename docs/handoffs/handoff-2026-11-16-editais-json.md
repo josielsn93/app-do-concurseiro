@@ -88,3 +88,9 @@
 - Causa do beco sem saída: o mesmo JSON importado em dois aparelhos gera `planId` diferentes; pull dava `lineage`, push é barrado pelas regras (CAS), e o "Baixar" forçado também recusava.
 - `applyRetaFinalPull` (`firestore-sync-engine.js`): com `force` (Baixar), a nuvem vence quando o plano local não existe, tem outro `planId` ou outro estado ativo. Mensagens de orientação para `lineage` e `missing-local-plan`.
 - Regra de uso: importar o plano em um aparelho só; os demais só baixam. Testes: `reta-final-sync-engine.test.js` (+2). Suíte: 3.272.
+
+## Revisão geral (17/11) — sem mudança de código
+
+- Feita revisão de estrutura, sync, segurança, desempenho e UX; relatório entregue ao usuário fora do repositório.
+- Proposta em 4 fases, aguardando decisão do usuário: (1) estabilizar: regras só para o UID do dono, bundle único com hash + aviso de nova versão, ícones locais, testes no CI antes do Pages, fim do backup em localStorage; (2) sync novo: plano/progresso/aulas/preferências em documentos separados, onSnapshot e persistência offline do SDK, migração automática do snapshot atual; (3) interface com 5 telas (Hoje, Plano, Calendário, Desempenho, Ajustes); (4) limpeza (src/lab, worker, .bat, docs antigos, telas não usadas).
+- Nada foi iniciado. Não começar sem o aval do usuário.
