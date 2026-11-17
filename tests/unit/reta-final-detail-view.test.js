@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   closeRetaFinalBlockDetail,
   openRetaFinalBlockDetail,
@@ -211,5 +211,116 @@ describe("renderRetaFinalBlocoCard", () => {
     });
     expect(html).not.toContain("<script>");
     expect(html).toContain("&lt;script&gt;alert(7)&lt;/script&gt;");
+  });
+});
+
+describe("aula (notas) no painel do bloco", () => {
+  const AULA = [
+    "## 🎯 Objetivo desta hora",
+    "Dominar **crase**.",
+    "",
+    "## 📝 Gabarito comentado",
+    "::: Gabarito da questão 1",
+    "**Letra B.** Explicação <b>não</b> confiável.",
+    ":::",
+  ].join("\n");
+
+  it("mostra o roteiro da aula logo após o cabeçalho, antes dos detalhes do bloco", () => {
+    const html = renderRetaFinalBlockDetail(block({ notas: AULA }), {
+      disciplina: disciplina(),
+      events: [],
+    });
+    expect(html).toContain('data-field="aula"');
+    expect(html).toContain('class="lesson"');
+    expect(html).toContain("Objetivo desta hora");
+    expect(html).toContain("<details");
+    const aula = html.indexOf('data-field="aula"');
+    expect(aula).toBeGreaterThan(html.indexOf("</header>"));
+    expect(aula).toBeLessThan(html.indexOf('data-field="topicos"'));
+    expect(aula).toBeLessThan(html.indexOf("Detalhes do bloco"));
+  });
+
+  it("escapa HTML dentro da aula", () => {
+    const html = renderRetaFinalBlockDetail(block({ notas: AULA }), {
+      disciplina: disciplina(),
+      events: [],
+    });
+    expect(html).not.toContain("<b>não</b>");
+    expect(html).toContain("&lt;b&gt;");
+  });
+
+  it("não cria seção de aula quando o bloco não tem notas", () => {
+    const html = renderRetaFinalBlockDetail(block(), {
+      disciplina: disciplina(),
+      events: [],
+    });
+    expect(html).not.toContain('data-field="aula"');
+  });
+
+  it("alarga o painel quando há aula (modificador de layout)", () => {
+    const plano = {
+      ativo: true,
+      tipo: "reta_final",
+      retaFinal: { blocos: [block({ notas: AULA })] },
+    };
+    const painel = openRetaFinalBlockDetail("rf-1", {
+      doc: document,
+      plan: plano,
+      editais: [{ id: "ed", disciplinas: [disciplina()] }],
+      eventos: [],
+      today: HOJE,
+    });
+    expect(painel.classList.contains("rf-detail-panel--aula")).toBe(true);
+  });
+
+  it("não alarga o painel quando não há aula", () => {
+    const plano = {
+      ativo: true,
+      tipo: "reta_final",
+      retaFinal: { blocos: [block()] },
+    };
+    const painel = openRetaFinalBlockDetail("rf-1", {
+      doc: document,
+      plan: plano,
+      editais: [{ id: "ed", disciplinas: [disciplina()] }],
+      eventos: [],
+      today: HOJE,
+    });
+    expect(painel.classList.contains("rf-detail-panel--aula")).toBe(false);
+  });
+});
+
+describe("aula referenciada no painel do bloco", () => {
+  const STUB = "📖 Aula completa: Objetivo\n\n::aula:a_1f_2000::";
+  const AULA_REAL = "## 🎯 Objetivo desta hora\nTexto completo da aula.";
+
+  it("renderiza espaço reservado para a aula", () => {
+    const html = renderRetaFinalBlockDetail(block({ notas: STUB }), {
+      disciplina: disciplina(),
+      events: [],
+    });
+    expect(html).toContain('data-field="aula"');
+    expect(html).toContain('data-aula-id="a_1f_2000"');
+    expect(html).not.toContain("::aula:");
+  });
+
+  it("hidrata o painel com o texto vindo do armazém", async () => {
+    const plano = {
+      ativo: true,
+      tipo: "reta_final",
+      retaFinal: { blocos: [block({ notas: STUB })] },
+    };
+    const painel = openRetaFinalBlockDetail("rf-1", {
+      doc: document,
+      plan: plano,
+      editais: [{ id: "ed", disciplinas: [disciplina()] }],
+      eventos: [],
+      today: HOJE,
+      resolveAula: async (id) => (id === "a_1f_2000" ? AULA_REAL : null),
+    });
+    await vi.waitFor(() =>
+      expect(painel.textContent).toContain("Texto completo da aula."),
+    );
+    expect(painel.textContent).not.toContain("Carregando aula");
   });
 });

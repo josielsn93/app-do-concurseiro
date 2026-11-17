@@ -197,3 +197,41 @@ describe("importação supervisionada da Reta Final ativa", () => {
     expect(mocks.saveDraft).not.toHaveBeenCalled();
   });
 });
+
+describe("aulas longas na importação", () => {
+  const LONGA = "## 🎯 Objetivo\n" + "Conteúdo da aula. ".repeat(200);
+
+  function jsonComAula() {
+    return {
+      versao: 1,
+      nome: "Plano",
+      dataFinal: "2027-03-14",
+      dias: [{ data: "2026-11-16", blocos: [{ disciplina: "Direito Penal", topicos: ["Crimes"], notas: LONGA }] }],
+    };
+  }
+
+  it("guarda a aula à parte e entrega o payload com referência curta", async () => {
+    const store = { putMany: vi.fn(async (m) => ({ local: m.size, cloud: m.size, cloudError: null })) };
+    const { payload, result } = await view.prepareRetaFinalPayload(jsonComAula(), store);
+    expect(store.putMany).toHaveBeenCalledTimes(1);
+    const [aulas] = store.putMany.mock.calls[0];
+    expect([...aulas.values()]).toEqual([LONGA]);
+    expect(payload.dias[0].blocos[0].notas).toContain("::aula:");
+    expect(payload.dias[0].blocos[0].notas.length).toBeLessThan(300);
+    expect(result.local).toBe(1);
+  });
+
+  it("não chama o armazém quando não há aulas longas", async () => {
+    const store = { putMany: vi.fn() };
+    const json = jsonComAula();
+    json.dias[0].blocos[0].notas = "nota curta";
+    const { payload } = await view.prepareRetaFinalPayload(json, store);
+    expect(store.putMany).not.toHaveBeenCalled();
+    expect(payload.dias[0].blocos[0].notas).toBe("nota curta");
+  });
+
+  it("interrompe a importação se não conseguir guardar localmente", async () => {
+    const store = { putMany: vi.fn(async () => ({ local: 0, cloud: 0, cloudError: null })) };
+    await expect(view.prepareRetaFinalPayload(jsonComAula(), store)).rejects.toThrow(/guardar as aulas/i);
+  });
+});

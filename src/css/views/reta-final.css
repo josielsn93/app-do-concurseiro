@@ -444,6 +444,39 @@ body.rf-detail-open {
   animation: rf-detail-slide-in 0.18s ease-out;
 }
 
+.rf-detail-panel--aula {
+  width: min(860px, 100%);
+}
+
+.rf-detail-panel--aula .rf-detail-actions {
+  position: sticky;
+  bottom: -20px;
+  z-index: 1;
+  margin: 12px -20px -20px;
+  padding: 12px 20px;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 720px) {
+  .rf-detail-panel--aula .rf-detail-actions {
+    bottom: -16px;
+    margin: 12px -16px -16px;
+    padding: 12px 16px;
+  }
+}
+
+.rf-detail-aula {
+  padding: 16px 0;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.rf-detail-aula .lesson {
+  max-width: none;
+  font-size: 1rem;
+}
+
 .rf-detail-panel:focus {
   outline: 2px solid var(--accent);
   outline-offset: -2px;
@@ -749,4 +782,19 @@ body.rf-detail-open {
   .rf-detail-actions {
     flex-wrap: wrap;
   }
+}
+
+.lesson-pending,
+.lesson-missing {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-control);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.lesson-missing {
+  border-left: 4px solid var(--warning, var(--accent));
 }

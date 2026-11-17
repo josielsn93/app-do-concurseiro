@@ -97,3 +97,17 @@ describe('buildEventDetailHtml', () => {
     expect(html).not.toContain('class="lesson"');
   });
 });
+
+describe('aula referenciada (texto guardado à parte)', () => {
+  const STUB = '📖 Aula completa: Objetivo\n\n::aula:a_1f_2000::';
+
+  it('mostra um espaço reservado em vez do texto da referência', () => {
+    const html = buildEventDetailHtml({
+      ev: { id: 'e', notas: STUB, data: '2026-11-16' },
+      status: { label: 'Pendente', class: 'badge-warning' },
+    });
+    expect(html).toContain('data-aula-id="a_1f_2000"');
+    expect(html).toContain('Carregando aula');
+    expect(html).not.toContain('::aula:');
+  });
+});

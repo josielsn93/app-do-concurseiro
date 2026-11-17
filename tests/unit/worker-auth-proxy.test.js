@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const FIREBASE_AUTH_HOST = 'app-de-estudos-14564.firebaseapp.com';
+const FIREBASE_AUTH_HOST = 'app-do-concurseiro.firebaseapp.com';
 
 let worker;
 let assetsFetch;

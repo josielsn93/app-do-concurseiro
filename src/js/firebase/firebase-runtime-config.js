@@ -4,17 +4,17 @@
 // Lista explicita de proposito: um host novo so entra aqui depois de ser
 // adicionado aos Authorized domains do Firebase Authentication.
 const PROXIED_AUTH_HOSTS = ['estudo-organizado.matheussilva421.workers.dev'];
-const FALLBACK_AUTH_DOMAIN = 'app-de-estudos-14564.firebaseapp.com';
+const FALLBACK_AUTH_DOMAIN = 'app-do-concurseiro.firebaseapp.com';
 
 window.ESTUDO_FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyC3wPAXvPRqq-xallRgivfkK5NWiW9wDPk',
+  apiKey: 'AIzaSyBRGA_4pou3dy7t77sDsxpxRJ1uGcZ1VvE',
   authDomain: PROXIED_AUTH_HOSTS.includes(window.location.hostname)
     ? window.location.hostname
     : FALLBACK_AUTH_DOMAIN,
-  projectId: 'app-de-estudos-14564',
-  storageBucket: 'app-de-estudos-14564.firebasestorage.app',
-  messagingSenderId: '824173301356',
-  appId: '1:824173301356:web:b346b7d59feca6f5e4d249',
+  projectId: 'app-do-concurseiro',
+  storageBucket: 'app-do-concurseiro.firebasestorage.app',
+  messagingSenderId: '615981664873',
+  appId: '1:615981664873:web:e3f183eacfd7ae3cdbb0f8',
 };
 
 window.ESTUDO_APP_CHECK_SITE_KEY = '';

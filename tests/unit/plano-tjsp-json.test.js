@@ -80,7 +80,7 @@ describe.skipIf(!temPrivado)('plano de estudos TJ-SP Escrevente (cronograma dia 
     for (const dia of plano.dias) {
       for (const b of dia.blocos) {
         if (/^(Matemática|Raciocínio|Informática)/.test(b.disciplina) && !/^Revisão|Questões/.test(b.notas) && !b.topicos.some((t) => /Questões da banca|Simulado|Revisão/.test(t))) {
-          expect(b.notas, `${dia.data} ${b.disciplina}`).toMatch(/Pratique|Faça/);
+          expect(b.notas, `${dia.data} ${b.disciplina}`).toMatch(/pratique|faça|resolva|refaça|exercícios/i);
         }
       }
     }

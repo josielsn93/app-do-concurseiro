@@ -11,6 +11,7 @@ import { renderCurrentView, renderEventCard } from '../components.js?v=8.37';
 import { currentView, openModal, closeModal, showConfirm, showToast } from '../app.js?v=8.37';
 import { openRegistroSessao } from '../registro-sessao.js?v=8.37';
 import { buildEventDetailHtml } from './event-detail-view.js?v=8.37';
+import { hydrateAulas } from './aulas-hydrate.js?v=8.37';
 
 // =============================================
 // ADD EVENT MODAL
@@ -511,6 +512,7 @@ export function openEventDetail(eventId) {
     aula: ev.aulaId ? getAulaName(ev.discId, ev.aulaId) : '',
     tempo: ev.tempoAcumulado > 0 ? formatTime(ev.tempoAcumulado) : '—',
   });
+  hydrateAulas(body);
   body.scrollTop = 0;
   body.closest('.modal')?.scrollTo?.(0, 0);
 
