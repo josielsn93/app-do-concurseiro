@@ -2240,6 +2240,104 @@ describe("reta-final sync engine integration", () => {
     expect(repository.writeFirestoreSnapshot).toHaveBeenCalledTimes(1);
   });
 
+  async function bootAdoptionOverEmptyRemote({
+    localEvents = [],
+    pendingEvents = [],
+    remoteEvents = [],
+  } = {}) {
+    const localPlan = localV2FromLegacy(legacyRfPlan());
+    const remote = {
+      version: 1,
+      schemaVersion: 6,
+      deviceId: "outro-navegador",
+      baseRemoteUpdatedAt: null,
+      payloadUpdatedAt: "2026-11-17T01:17:52.755Z",
+      sentAt: "2026-11-17T01:17:52.755Z",
+      payload: {
+        config: {},
+        eventos: cloneJson(remoteEvents),
+        editais: [],
+        arquivo: [],
+        revisoes: [],
+        disciplinas: [],
+      },
+    };
+    const pending = adoptionEnvelope({
+      plan: localPlan,
+      payloadUpdatedAt: "2026-11-17T01:24:17.540Z",
+      events: pendingEvents,
+      baseRemoteUpdatedAt: "2026-11-17T01:10:00.000Z",
+    });
+    await boot({ plan: localPlan, basePlan: localPlan, remote });
+    storeModule.state.eventos = cloneJson(localEvents);
+    storeModule.state.editais = [];
+    storeModule.state.arquivo = [];
+    storeModule.state.revisoes = [];
+    outbox.setPendingRecord({
+      id: "latest_snapshot",
+      status: "pending",
+      attempts: 0,
+      queuedAt: "2026-11-17T01:24:17.540Z",
+      envelope: pending,
+    });
+    syncCenter.mergeStudyStates.mockImplementation(mergeAcademicCollections);
+    return { localPlan, remote, pending };
+  }
+
+  it("republishes a stale adoption when the remote document changed but holds no plan", async () => {
+    const { remote } = await bootAdoptionOverEmptyRemote();
+
+    const result = await engine.flushFirestoreOutbox({ manual: true });
+
+    expect(result).toBe(true);
+    expect(repository.writeFirestoreSnapshot).toHaveBeenCalledTimes(1);
+    const written = repository.writeFirestoreSnapshot.mock.calls[0][2];
+    expect(written.baseRemoteUpdatedAt).toBe(remote.payloadUpdatedAt);
+    expect(written.retaFinalSync).toMatchObject({
+      baseRevision: 0,
+      snapshotRevision: 1,
+      baseSnapshotRevision: 0,
+      state: "active",
+      baseRemoteUpdatedAt: remote.payloadUpdatedAt,
+    });
+    expect(storeModule.state.config.firestoreSync.conflict).toBeNull();
+    expect(await outbox.getPendingFirestoreSnapshot()).toBeNull();
+  });
+
+  it("clears a persisted adoption-base conflict on a normal sync", async () => {
+    await bootAdoptionOverEmptyRemote();
+    storeModule.state.config.firestoreSync.conflict = {
+      type: "reta-final-conflict",
+      cause: "adoption-base",
+    };
+
+    const result = await engine.syncFirestoreNow();
+
+    expect(result).toBe(true);
+    expect(repository.writeFirestoreSnapshot).toHaveBeenCalledTimes(1);
+    expect(storeModule.state.config.firestoreSync.conflict).toBeNull();
+  });
+
+  it("keeps blocking a stale adoption when the remote academic data diverges", async () => {
+    await bootAdoptionOverEmptyRemote({
+      pendingEvents: [
+        { id: "ev1", notas: "base", updatedAt: "2026-11-17T01:00:00.000Z" },
+      ],
+      localEvents: [
+        { id: "ev1", notas: "local", updatedAt: "2026-11-17T01:20:00.000Z" },
+      ],
+      remoteEvents: [
+        { id: "ev1", notas: "remoto", updatedAt: "2026-11-17T01:17:00.000Z" },
+      ],
+    });
+
+    const result = await engine.flushFirestoreOutbox({ manual: true });
+
+    expect(result).toBe(false);
+    expect(repository.writeFirestoreSnapshot).not.toHaveBeenCalled();
+    expect(await outbox.getPendingFirestoreSnapshot()).not.toBeNull();
+  });
+
   it("acknowledges a stale adoption outbox when the current payload is already remote", async () => {
     const events = [
       { id: "ev_remote", notas: "remote", updatedAt: "2026-10-27T17:07:00.000Z" },
