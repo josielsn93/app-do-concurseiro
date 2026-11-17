@@ -19,6 +19,8 @@ import { activateRetaFinal } from '../logic/reta-final.js';
 import { invalidateDiscCache, invalidateDashCaches } from '../logic.js?v=8.37';
 import { renderCurrentView } from '../components.js?v=8.37';
 
+import { externalizeLessonNotes } from '../logic/aulas-externas.js?v=8.37';
+import { aulasStore } from '../store/aulas-store.js?v=8.37';
 function formatBrDate(dateStr) {
   const [year, month, day] = String(dateStr || '').split('-');
   if (!year || !month || !day) return '';
@@ -336,6 +338,20 @@ export function openRetaFinalComparison(payload) {
   return true;
 }
 
+/**
+ * Separa as aulas longas do payload (guardando-as no armazém de aulas) e devolve
+ * o payload enxuto, com referências curtas no lugar do texto.
+ */
+export async function prepareRetaFinalPayload(payload, store = aulasStore) {
+  const { payload: compact, aulas } = externalizeLessonNotes(payload);
+  if (aulas.size === 0) return { payload: compact, result: { local: 0, cloud: 0, cloudError: null } };
+  const result = await store.putMany(aulas);
+  if (!result || result.local < aulas.size) {
+    throw new Error('Não foi possível guardar as aulas neste aparelho. Libere espaço do navegador e tente de novo.');
+  }
+  return { payload: compact, result };
+}
+
 export function openRetaFinalImport() {
   const input = document.createElement('input');
   input.type = 'file';
@@ -367,7 +383,14 @@ export function openRetaFinalImport() {
         showToast('JSON v2 só pode ser comparado com uma Reta Final v2 ativa.', 'error');
         return;
       }
-      openRetaFinalPreview(payload);
+      prepareRetaFinalPayload(payload)
+        .then(({ payload: compact, result }) => {
+          if (result.cloudError) {
+            showToast('Aulas guardadas só neste aparelho (sem login na nuvem).', 'info');
+          }
+          openRetaFinalPreview(compact);
+        })
+        .catch((err) => showToast(err.message || 'Falha ao preparar as aulas.', 'error'));
     };
     reader.onloadend = () => {
       input.remove();

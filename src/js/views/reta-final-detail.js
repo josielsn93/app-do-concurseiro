@@ -9,7 +9,8 @@
 import { esc, todayStr } from "../utils.js?v=8.37";
 import { state } from "../store.js?v=8.37";
 import { getDisc } from "../logic.js?v=8.37";
-import { renderLessonNotes } from "../ui/event-detail-view.js?v=8.37";
+import { renderLessonOrRef } from "../ui/event-detail-view.js?v=8.37";
+import { hydrateAulas } from "../ui/aulas-hydrate.js?v=8.37";
 
 const STATUS_LABEL = {
   pendente: "Pendente",
@@ -128,7 +129,7 @@ function renderAula(block) {
   return (
     '<section class="rf-detail-section rf-detail-aula" data-field="aula" aria-label="Roteiro da aula">' +
     '<div class="lesson">' +
-    renderLessonNotes(notas) +
+    renderLessonOrRef(notas) +
     "</div>" +
     "</section>"
   );
@@ -336,6 +337,7 @@ export function openRetaFinalBlockDetail(blockId, options = {}) {
   });
   const closeButton = panel.querySelector('[data-action="rf-close-detail"]');
   if (closeButton) closeButton.focus();
+  hydrateAulas(panel, options.resolveAula);
   return panel;
 }
 

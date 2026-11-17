@@ -54,7 +54,7 @@ describe('Firestore integration contracts', () => {
     const swSource = read('src/sw.js');
     const runtimeConfigSource = read('src/js/firebase/firebase-runtime-config.js');
 
-    expect(workerSource).toContain('app-de-estudos-14564.firebaseapp.com');
+    expect(workerSource).toContain('app-do-concurseiro.firebaseapp.com');
     expect(workerSource).toContain("RESERVED_PREFIX = '/__/'");
     expect(workerSource).toContain('startsWith(RESERVED_PREFIX)');
     expect(workerSource).toContain("redirect: 'manual'");
@@ -271,7 +271,7 @@ describe('Firestore integration contracts', () => {
     expect(connectSrc).toContain('https://firestore.googleapis.com');
     expect(connectSrc).toContain('https://content-firebaseappcheck.googleapis.com');
     expect(frameSrc).toContain('https://accounts.google.com');
-    expect(frameSrc).toContain('https://app-de-estudos-14564.firebaseapp.com');
+    expect(frameSrc).toContain('https://app-do-concurseiro.firebaseapp.com');
   });
 
   it('keeps Firestore rules owner-scoped and denies physical deletes', () => {
@@ -353,4 +353,34 @@ describe('Firestore integration contracts', () => {
     expect(rules).toContain('allow delete: if false;');
   });
 
+});
+
+describe('Regras para as aulas (users/{uid}/aulas)', () => {
+  const rules = () => read('firestore.rules');
+  const bloco = () => {
+    const text = rules();
+    const start = text.indexOf('match /users/{uid}/aulas/{aulaId}');
+    expect(start, 'bloco de aulas existe').toBeGreaterThan(-1);
+    return text.slice(start, text.indexOf('match /{document=**}', start));
+  };
+
+  it('só o dono lê e grava as próprias aulas', () => {
+    const b = bloco();
+    expect(b).toMatch(/allow read: if owns\(uid\)/);
+    expect(b).toMatch(/allow create, update: if owns\(uid\)/);
+  });
+
+  it('valida formato do id, campos e tamanho do texto', () => {
+    const b = bloco();
+    expect(b).toContain("aulaId.matches('a_[0-9a-f]+_[0-9]+')");
+    expect(b).toContain("hasOnly(['version', 'text', 'updatedAt'])");
+    expect(b).toMatch(/text\.size\(\) <= \d+/);
+  });
+
+  it('não permite apagar e mantém a negação padrão ao final', () => {
+    const b = bloco();
+    expect(b).toMatch(/allow delete: if false/);
+    const text = rules();
+    expect(text.indexOf('users/{uid}/aulas')).toBeLessThan(text.indexOf('match /{document=**}'));
+  });
 });

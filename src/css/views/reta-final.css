@@ -783,3 +783,18 @@ body.rf-detail-open {
     flex-wrap: wrap;
   }
 }
+
+.lesson-pending,
+.lesson-missing {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-control);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.lesson-missing {
+  border-left: 4px solid var(--warning, var(--accent));
+}

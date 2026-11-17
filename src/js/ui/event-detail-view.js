@@ -1,3 +1,4 @@
+import { parseAulaRef } from '../logic/aulas-externas.js?v=8.37';
 /**
  * Detalhe do evento: HTML semântico + renderizador seguro das anotações da aula.
  *
@@ -173,7 +174,7 @@ export function buildEventDetailHtml({ ev, status, disciplina = '', assunto = ''
   ].join('');
 
   const lesson = ev.notas
-    ? `<section class="lesson" aria-label="Roteiro da aula">${renderLessonNotes(ev.notas)}</section>`
+    ? `<section class="lesson" aria-label="Roteiro da aula">${renderLessonOrRef(ev.notas)}</section>`
     : '';
 
   return `<article class="event-detail" aria-label="Detalhes do estudo">
@@ -182,4 +183,12 @@ export function buildEventDetailHtml({ ev, status, disciplina = '', assunto = ''
   ${extraSection('Fontes', ev.fontes)}
   ${extraSection('Legislação', ev.legislacao)}
 </article>`;
+}
+
+
+/** Aula completa ou espaço reservado quando o texto está guardado à parte. */
+export function renderLessonOrRef(notas) {
+  const id = parseAulaRef(notas);
+  if (!id) return renderLessonNotes(notas);
+  return `<div class="lesson-pending" data-aula-id="${escapeHtml(id)}" aria-live="polite"><p>Carregando aula…</p></div>`;
 }
