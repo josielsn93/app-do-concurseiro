@@ -234,7 +234,7 @@ test.describe("Reta Final — editor inteligente", () => {
     await expect(panel).toHaveCount(0);
   });
 
-  test("aplica localmente offline e mantém a sincronização pendente", async ({
+  test("aplica o rascunho mesmo offline e mantém a alteração após recarregar", async ({
     page,
     context,
   }) => {
@@ -249,9 +249,8 @@ test.describe("Reta Final — editor inteligente", () => {
     await context.setOffline(true);
     await page.locator('[data-action="rf-apply-draft"]').click();
     await expect(page.locator("#toast-container")).toContainText(
-      "Aplicado localmente",
+      "Alterações aplicadas ao plano",
     );
-    await expect(page.locator("#toast-container")).toContainText("pendente");
     const minutos = await page.evaluate(() =>
       window.EstudoApp.state.planejamento.retaFinal.blocos.map(
         (block) => block.minutos,

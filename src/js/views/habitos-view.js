@@ -15,7 +15,7 @@ import { state, scheduleSave } from '../store.js?v=8.37';
 import { getActiveDisciplinas, getDisc } from '../logic.js?v=8.37';
 import { renderCurrentView } from '../components.js?v=8.37';
 import { showConfirm, showToast, openModal, closeModal as appCloseModal } from '../app.js?v=8.37';
-import { recordSyncTombstone } from '../sync/sync-center.js?v=8.37';
+import { recordSyncTombstone } from '../sync/tombstones.js?v=8.37';
 
 export const HABIT_HIST_PAGE_SIZE = 20;
 export let habitHistPage = 1;

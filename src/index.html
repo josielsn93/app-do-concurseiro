@@ -18,7 +18,7 @@
                  script-src 'self' https://apis.google.com https://accounts.google.com https://www.google.com https://www.gstatic.com;
                  style-src 'self' 'unsafe-inline';
                  font-src 'self';
-                 connect-src 'self' https://*.workers.dev https://www.googleapis.com https://accounts.google.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://content-firebaseappcheck.googleapis.com;
+                 connect-src 'self' https://www.googleapis.com https://accounts.google.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://content-firebaseappcheck.googleapis.com;
                  frame-src 'self' https://accounts.google.com https://app-do-concurseiro.firebaseapp.com https://www.google.com;
                  img-src 'self' data: https: blob:;
                  media-src 'self' https://assets.mixkit.co;"
@@ -125,16 +125,6 @@
         </div>
       </div>
 
-      <div class="sidebar-drive" data-tooltip="Google Drive" hidden>
-        <div class="drive-status" data-action="open-drive-modal">
-          <div class="drive-dot" id="drive-dot"></div>
-          <div class="drive-text">
-            <strong id="drive-label">Google Drive</strong>
-            <span id="drive-sublabel">Clique para conectar</span>
-          </div>
-          <i class="fa fa-cloud drive-cloud-icon"></i>
-        </div>
-      </div>
     </nav>
 
     <!-- MAIN -->
@@ -172,7 +162,7 @@
             <span class="sync-pill-icon" aria-hidden="true">
               <i class="fa fa-circle"></i>
             </span>
-            <span class="sync-pill-label" id="sync-pill-label">Aguardando sync</span>
+            <span class="sync-pill-label" id="sync-pill-label">Só neste aparelho</span>
             <i class="fa fa-chevron-down sync-pill-caret" aria-hidden="true"></i>
           </button>
           <div
@@ -182,32 +172,6 @@
             aria-labelledby="sync-pill"
             hidden
           >
-            <div class="sync-popover-status">
-              <div class="sync-popover-row">
-                <span class="sync-popover-row-label">Local</span>
-                <span class="sync-popover-row-value" id="sync-popover-local">Aguardando…</span>
-              </div>
-              <div class="sync-popover-row">
-                <span class="sync-popover-row-label">Sincronização remota</span>
-                <span class="sync-popover-row-value" id="sync-popover-remote">Aguardando…</span>
-              </div>
-              <div class="sync-popover-row">
-                <span class="sync-popover-row-label">Última sync manual</span>
-                <span class="sync-popover-row-value" id="sync-popover-last">Nunca</span>
-              </div>
-            </div>
-            <hr class="sync-popover-divider" />
-            <div class="sync-popover-actions">
-              <button class="btn btn-primary btn-sm" type="button" data-action="sync-now">
-                <i class="fa fa-arrows-rotate"></i> Sincronizar agora
-              </button>
-              <button class="btn btn-outline btn-sm" type="button" data-action="download-from-source">
-                <i class="fa fa-cloud-arrow-down"></i> Baixar dados
-              </button>
-              <button class="btn btn-ghost btn-sm" type="button" data-action="download-sync-log">
-                <i class="fa fa-file-lines"></i> Baixar log
-              </button>
-            </div>
           </div>
         </div>
         <!-- Theme switcher (icon-only with tooltip) -->
@@ -393,56 +357,6 @@
         <div class="modal-footer">
           <button class="btn btn-ghost" data-action="close-modal" data-modal="modal-habit">Cancelar</button>
           <button class="btn btn-primary" data-action="save-habit">Registrar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- DRIVE MODAL -->
-    <div
-      class="modal-overlay"
-      id="modal-drive"
-      role="dialog"
-      aria-labelledby="modal-drive-title"
-      aria-describedby="modal-drive-body"
-      aria-modal="true"
-      aria-hidden="true"
-    >
-      <div class="modal">
-        <div class="modal-header">
-          <h2 id="modal-drive-title">Sincronização com Google Drive</h2>
-          <button
-            class="modal-close"
-            data-action="close-modal"
-            data-modal="modal-drive"
-            aria-label="Fechar"
-            title="Fechar"
-          >
-            ×
-          </button>
-        </div>
-        <div class="modal-body" id="modal-drive-body">
-          <div class="drive-guide">
-            <p>Para sincronizar seus dados com o Google Drive:</p>
-            <p>1. Acesse <strong>console.cloud.google.com</strong></p>
-            <p>2. Crie um projeto e habilite a <strong>Google Drive API</strong></p>
-            <p>3. Crie credenciais OAuth 2.0 (Aplicativo Web)</p>
-            <p>4. Adicione seu domínio como URL autorizada</p>
-            <p>5. Cole o <strong>Client ID</strong> abaixo</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Google OAuth Client ID</label>
-            <input
-              type="text"
-              class="form-control"
-              id="drive-client-id"
-              placeholder="123456789-xxx.apps.googleusercontent.com"
-            />
-          </div>
-          <div id="drive-status-area"></div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-ghost" data-action="close-modal" data-modal="modal-drive">Fechar</button>
-          <button class="btn btn-primary" id="drive-action-btn" data-action="drive-action">Conectar</button>
         </div>
       </div>
     </div>

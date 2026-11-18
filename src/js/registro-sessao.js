@@ -21,7 +21,7 @@ import { openModal, closeModal, showToast, showConfirm, navigate } from './app.j
 import { esc, trunc, uid } from './utils.js?v=8.37';
 import { renderCurrentView } from './components.js?v=8.37';
 import { openAddPastSessionModal } from './ui/event-modals.js?v=8.37';
-import { recordSyncTombstone } from './sync/sync-center.js?v=8.37';
+import { recordSyncTombstone } from './sync/tombstones.js?v=8.37';
 
 // Sub-módulos
 import {

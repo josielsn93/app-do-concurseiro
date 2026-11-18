@@ -7,6 +7,7 @@
  */
 
 import { registerAction } from "./dispatcher.js";
+import { notifyLocalChange } from "../../sync/nuvem.js?v=8.37";
 import { showToast } from "../../app.js?v=8.37";
 import { renderCurrentView } from "../../components.js?v=8.37";
 import {
@@ -140,10 +141,8 @@ export function registerRetaFinalApplyActions() {
       invalidateDashCaches();
       renderCurrentView();
       closeRetaFinalBlockDetail(document);
-      showToast(
-        "Aplicado localmente. Sincronização remota pendente até confirmação (ACK).",
-        "success",
-      );
+      notifyLocalChange();
+      showToast("Alterações aplicadas ao plano.", "success");
     } catch (error) {
       el.disabled = false;
       showToast(error.message || "Falha ao aplicar o rascunho.", "error");

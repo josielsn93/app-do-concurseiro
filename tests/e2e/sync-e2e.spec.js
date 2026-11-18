@@ -268,45 +268,23 @@ test.describe('Sync E2E: Sync status UI updates without full re-render', () => {
     expect(diff).toBeLessThan(1000);
   });
 
-  test('sync status shows different states correctly', async ({ page }) => {
+  test('sync indicator explains the state and offers the next step', async ({ page }) => {
     const state = createE2EState();
     await seedState(page, state);
     await page.goto('/');
 
     await expect(page.locator('#topbar-title')).toBeVisible();
-    await page.click('[data-view="config"]');
-    await expect(page.locator('#topbar-title')).toHaveText('Configurações');
+    await expect(page.locator('#sync-pill-label')).toHaveText('Só neste aparelho');
 
-    const syncPill = page.locator('#sync-pill');
-    const syncPillLabel = page.locator('#sync-pill-label');
-    await expect(syncPill).toBeVisible();
+    await page.locator('#sync-pill').click();
+    await expect(page.locator('#sync-popover')).toBeVisible();
+    await expect(page.locator('#sync-popover')).toContainText('Entrar com Google');
+    await expect(page.locator('#sync-popover')).not.toContainText('Conflito');
 
-    // Test different status states via event dispatch
-    const statuses = [
-      { status: 'syncing', expectedText: /sincronizando/i },
-      { status: 'synced', expectedText: /tudo sincronizado/i },
-      { status: 'error', expectedText: /erro/i },
-    ];
-
-    for (const { status, expectedText } of statuses) {
-      await page.evaluate((s) => {
-        document.dispatchEvent(
-          new CustomEvent('app:saveStatus', {
-            detail: { status: 'saved', message: 'Salvo localmente' }
-          })
-        );
-        document.dispatchEvent(
-          new CustomEvent('app:primarySyncStatus', {
-            detail: { status: s, reason: 'test' }
-          })
-        );
-      }, status);
-
-      await page.waitForTimeout(150);
-
-      // Unified pill label should reflect the state.
-      const textContent = await syncPillLabel.textContent();
-      expect(textContent.toLowerCase()).toMatch(expectedText);
-    }
+    await page.evaluate(() => {
+      document.dispatchEvent(new CustomEvent('app:saveStatus', { detail: { status: 'error', message: 'Erro ao salvar' } }));
+    });
+    await expect(page.locator('#sync-pill-label')).toHaveText('Erro ao salvar');
   });
+
 });

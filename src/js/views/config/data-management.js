@@ -19,15 +19,6 @@ import {
   invalidateRevCache,
 } from '../../logic.js?v=8.37';
 import { renderCurrentView } from '../../components.js?v=8.37';
-import {
-  previewFirestoreRestore,
-  pullFromFirestore,
-} from '../../sync/firestore-sync-engine.js?v=8.37';
-import {
-  previewCloudflareRestore,
-  pullFromCloudflare,
-} from '../../cloud-sync.js?v=8.37';
-import { previewDriveRestore, pullFromDrive } from '../../drive-sync.js?v=8.37';
 import { previewRestoreImpact, validateBackupPayload } from '../../backup-restore.js?v=8.37';
 import { renderRestoreImpactSummary } from './backup-settings.js?v=8.37';
 
@@ -167,73 +158,9 @@ export function importData() {
   input.click();
 }
 
-function openRemoteRestorePreview(sourceLabel, previewPromise, onConfirm, label) {
-  showToast(`Lendo backup ${sourceLabel} para prévia...`, 'info');
-  return previewPromise
-    .then((payload) => {
-      if (!payload || typeof payload !== 'object') {
-        showToast(`Nenhum backup valido encontrado em ${sourceLabel}.`, 'error');
-        return false;
-      }
-      return openRestorePreviewModal(payload, {
-        sourceLabel,
-        label,
-        onConfirm,
-      });
-    })
-    .catch((err) => {
-      console.error(`Erro ao preparar restore ${sourceLabel}:`, err);
-      showToast(`Não foi possível ler o backup ${sourceLabel}.`, 'error');
-      return false;
-    });
-}
-
+// Restauração é sempre a partir de um arquivo: a nuvem já fica sincronizada.
 export function restoreBackupFromSelectedSource() {
-  const source = document.getElementById('backup-restore-source')?.value || 'local';
-
-  if (source === 'local') {
-    importData();
-    return;
-  }
-
-  if (source === 'firestore') {
-    if (!state.config?.firestoreSync?.enabled) {
-      showToast('Ative o Firestore e entre com Google antes de restaurar por ele.', 'error');
-      return;
-    }
-    return openRemoteRestorePreview(
-      'Firestore',
-      previewFirestoreRestore(),
-      () => pullFromFirestore(true, { discardPending: true }),
-      'Restaurar Firestore'
-    );
-  }
-
-  if (source === 'cloudflare') {
-    if (!state.config?.cfSyncEnabled || !state.config?.cfUrl || !state.config?.cfToken) {
-      showToast('Configure a sincronização Cloudflare antes de restaurar por ela.', 'error');
-      return;
-    }
-    return openRemoteRestorePreview(
-      'Cloudflare',
-      previewCloudflareRestore(),
-      () => pullFromCloudflare(true),
-      'Restaurar Cloudflare'
-    );
-  }
-
-  if (source === 'drive') {
-    if (!state.driveFileId) {
-      showToast('Conecte o Google Drive antes de restaurar por ele.', 'error');
-      return;
-    }
-    return openRemoteRestorePreview(
-      'Google Drive',
-      previewDriveRestore(),
-      () => pullFromDrive().catch((err) => console.error('Erro ao restaurar do Drive:', err)),
-      'Restaurar Drive'
-    );
-  }
+  importData();
 }
 
 export function clearAllData() {

@@ -6,10 +6,9 @@
  * unitário importa este módulo — o transform do Vitest não remove shebang e
  * quebraria o parse.
  *
- * Atualiza em sincronia a versão de cache nos quatro arquivos acoplados:
+ * Atualiza em sincronia a versão de cache nos três arquivos acoplados:
  *   - src/sw.js                              (APP_VERSION = 'X.YY')
  *   - src/index.html                         (query strings ?v=X.YY)
- *   - src/js/sync/sync-diagnostic.js         (DIAGNOSTIC_BUILD_VERSION = 'X.YY')
  *   - tests/unit/css-architecture.test.js    (asserções que fixam a versão)
  *
  * Substitui APENAS a versão atual exata lida de src/sw.js, portanto os
@@ -33,7 +32,6 @@ const SW_FILE = 'src/sw.js';
 const SYNC_FILES = [
   SW_FILE,
   'src/index.html',
-  'src/js/sync/sync-diagnostic.js',
   'tests/unit/css-architecture.test.js'
 ];
 

@@ -6,10 +6,8 @@ describe('ui/actions/config.js', () => {
   let storeModule;
   let appModule;
   let componentsModule;
-  let cloudSync;
-  let firestoreSync;
-  let syncCoordinator;
-  let driveSync;
+  let nuvem;
+  let statusUi;
   let notificationsModule;
 
   beforeEach(async () => {
@@ -19,54 +17,30 @@ describe('ui/actions/config.js', () => {
       updateConfig: vi.fn(),
       toggleConfig: vi.fn(),
       updateFrequencia: vi.fn(),
-      toggleCfSync: vi.fn(),
       archiveOldEvents: vi.fn(),
       clearAllData: vi.fn(),
       setTheme: vi.fn(),
       exportData: vi.fn(),
       importData: vi.fn(),
-      restoreBackupFromSelectedSource: vi.fn(),
-      openDriveModal: vi.fn(),
-      driveDisconnect: vi.fn(),
     };
     storeModule = { scheduleSave: vi.fn(), state: { config: {} } };
     appModule = { showToast: vi.fn(), openModal: vi.fn(), showConfirm: vi.fn() };
     componentsModule = { renderCurrentView: vi.fn() };
-    cloudSync = {
-      forceCloudflareSync: vi.fn(),
-      pullFromCloudflare: vi.fn(),
-      pushToCloudflare: vi.fn(),
-      mergeFromCloudflare: vi.fn(),
+    nuvem = {
+      nuvemSignIn: vi.fn(() => Promise.resolve({ uid: 'u1' })),
+      nuvemSignOut: vi.fn(() => Promise.resolve()),
+      nuvemSyncNow: vi.fn(() => Promise.resolve(true)),
+      downloadNuvemDiagnostic: vi.fn(),
     };
-    firestoreSync = {
-      firestoreSignIn: vi.fn(),
-      firestoreSignOut: vi.fn(),
-      enableFirestoreSync: vi.fn(),
-      disableFirestoreSync: vi.fn(),
-      syncFirestoreNow: vi.fn(),
-      pullFromFirestore: vi.fn(),
-      mergeFromFirestore: vi.fn(),
-      forcePushFirestore: vi.fn(),
-      getFirestoreSyncStatus: vi.fn(() => ({ configured: true, signedIn: true, enabled: true })),
-    };
-    syncCoordinator = { flushPrimarySyncNow: vi.fn(() => Promise.resolve(true)) };
+    statusUi = { setSyncPopoverOpen: vi.fn(), toggleSyncPopover: vi.fn() };
     notificationsModule = { adoptNotificationPermission: vi.fn() };
-    driveSync = {
-      syncWithDrive: vi.fn(() => Promise.resolve()),
-      pullFromDrive: vi.fn(),
-      mergeFromDrive: vi.fn(),
-      driveAction: vi.fn(),
-    };
-
     vi.doMock('../../src/js/ui/actions/dispatcher.js', () => ({ registerAction }));
     vi.doMock('../../src/js/views/config-view.js?v=8.37', () => configView);
     vi.doMock('../../src/js/store.js?v=8.37', () => storeModule);
     vi.doMock('../../src/js/app.js?v=8.37', () => appModule);
     vi.doMock('../../src/js/components.js?v=8.37', () => componentsModule);
-    vi.doMock('../../src/js/cloud-sync.js?v=8.37', () => cloudSync);
-    vi.doMock('../../src/js/sync/firestore-sync-engine.js?v=8.37', () => firestoreSync);
-    vi.doMock('../../src/js/sync/sync-coordinator.js?v=8.37', () => syncCoordinator);
-    vi.doMock('../../src/js/drive-sync.js?v=8.37', () => driveSync);
+    vi.doMock('../../src/js/sync/nuvem.js?v=8.37', () => nuvem);
+    vi.doMock('../../src/js/sync/nuvem-status-ui.js?v=8.37', () => statusUi);
     vi.doMock('../../src/js/notifications.js?v=8.37', () => notificationsModule);
 
     await import('../../src/js/ui/actions/config.js');
@@ -89,46 +63,18 @@ describe('ui/actions/config.js', () => {
 
   it('registers config actions', () => {
     const calls = registerAction.mock.calls.map((c) => c[0]);
-    expect(calls).toContain('update-config');
-    expect(calls).toContain('toggle-config');
-    expect(calls).toContain('update-frequencia');
-    expect(calls).toContain('toggle-password-visibility');
-    expect(calls).toContain('toggle-cf-sync');
-    expect(calls).toContain('archive-old-events');
-    expect(calls).toContain('clear-all-data');
-    expect(calls).toContain('set-theme');
-    expect(calls).toContain('export-data');
-    expect(calls).toContain('restore-backup');
-    expect(calls).toContain('open-drive-modal');
-    expect(calls).toContain('drive-disconnect');
-    expect(calls).toContain('disconnect-drive');
-    expect(calls).toContain('request-notification-permission');
-    expect(calls).toContain('test-notification');
-    expect(calls).toContain('force-cloudflare-sync');
-    expect(calls).toContain('cloud-conflict-export-local');
-    expect(calls).toContain('cloud-conflict-pull-remote');
-    expect(calls).toContain('cloud-conflict-force-push');
-    expect(calls).toContain('firestore-sign-in');
-    expect(calls).toContain('firestore-sign-out');
-    expect(calls).toContain('firestore-enable-primary');
-    expect(calls).toContain('firestore-enable-shadow');
-    expect(calls).toContain('firestore-disable-sync');
-    expect(calls).toContain('firestore-sync-now');
-    expect(calls).toContain('firestore-pull-remote');
-    expect(calls).toContain('firestore-merge-remote');
-    expect(calls).toContain('firestore-force-push');
-    expect(calls).toContain('firestore-export-local');
-    expect(calls).toContain('cloud-merge-remote');
-    expect(calls).toContain('drive-sync-now');
-    expect(calls).toContain('pull-from-drive');
-    expect(calls).toContain('merge-from-drive');
-    expect(calls).toContain('drive-action');
-    expect(calls).toContain('sync-center-smart-sync');
-    expect(calls).toContain('toggle-global-sync');
-    expect(calls).toContain('manual-sync-all');
-    expect(calls).toContain('sync-center-export-local');
-    expect(calls).toContain('sync-center-import-local');
-    expect(calls).toContain('force-sw-cache-clear');
+    for (const name of [
+      'update-config', 'toggle-config', 'update-frequencia', 'toggle-password-visibility',
+      'archive-old-events', 'clear-all-data', 'set-theme', 'export-data', 'import-data',
+      'restore-backup', 'request-notification-permission', 'test-notification',
+      'nuvem-sign-in', 'nuvem-sign-out', 'nuvem-sync-now', 'nuvem-download-log',
+      'toggle-sync-popover', 'force-sw-cache-clear',
+    ]) {
+      expect(calls).toContain(name);
+    }
+    for (const gone of ['toggle-cf-sync', 'open-drive-modal', 'firestore-force-push', 'cloud-conflict-pull-remote', 'drive-sync-now']) {
+      expect(calls).not.toContain(gone);
+    }
   });
 
   it('update-config handler parses number values', () => {
@@ -197,12 +143,6 @@ describe('ui/actions/config.js', () => {
     expect(input.type).toBe('text');
   });
 
-  it('toggle-cf-sync handler passes checked state', () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'toggle-cf-sync')[1];
-    handler({ checked: true });
-    expect(configView.toggleCfSync).toHaveBeenCalledWith(true);
-  });
-
   it('archive-old-events handler parses days', () => {
     const handler = registerAction.mock.calls.find((c) => c[0] === 'archive-old-events')[1];
     handler({ dataset: { days: '30' } });
@@ -221,130 +161,25 @@ describe('ui/actions/config.js', () => {
     expect(configView.setTheme).toHaveBeenCalledWith('dark');
   });
 
-  it('cloud-conflict-pull-remote shows confirmation', () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'cloud-conflict-pull-remote')[1];
-    handler({});
-    expect(appModule.showConfirm).toHaveBeenCalled();
+
+  const handler = (name) => registerAction.mock.calls.find((c) => c[0] === name)[1];
+
+  it('nuvem-sign-in entra com o Google e avisa', async () => {
+    await handler('nuvem-sign-in')();
+    expect(nuvem.nuvemSignIn).toHaveBeenCalled();
+    expect(appModule.showToast).toHaveBeenCalledWith(expect.stringContaining('Conectado'), 'success');
   });
 
-  it('cloud-conflict-force-push shows confirmation', () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'cloud-conflict-force-push')[1];
-    handler({});
-    expect(appModule.showConfirm).toHaveBeenCalled();
+  it('nuvem-sync-now sincroniza e fecha o menu', async () => {
+    await handler('nuvem-sync-now')();
+    expect(statusUi.setSyncPopoverOpen).toHaveBeenCalledWith(false);
+    expect(nuvem.nuvemSyncNow).toHaveBeenCalled();
+    expect(appModule.showToast).toHaveBeenCalledWith('Sincronizado.', 'success');
   });
 
-  it('firestore-enable-primary calls enableFirestoreSync with primary', () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'firestore-enable-primary')[1];
-    handler({});
-    expect(firestoreSync.enableFirestoreSync).toHaveBeenCalledWith('primary');
-  });
-
-  it('firestore-enable-shadow calls enableFirestoreSync with shadow', () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'firestore-enable-shadow')[1];
-    handler({});
-    expect(firestoreSync.enableFirestoreSync).toHaveBeenCalledWith('shadow');
-  });
-
-  it('firestore-pull-remote shows confirmation', () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'firestore-pull-remote')[1];
-    handler({});
-    expect(appModule.showConfirm).toHaveBeenCalled();
-  });
-
-  it('firestore-merge-remote shows confirmation', () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'firestore-merge-remote')[1];
-    handler({});
-    expect(appModule.showConfirm).toHaveBeenCalled();
-  });
-
-  it('firestore-force-push shows confirmation', () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'firestore-force-push')[1];
-    handler({});
-    expect(appModule.showConfirm).toHaveBeenCalled();
-  });
-
-  it('sync-center-smart-sync shows success when configured', async () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'sync-center-smart-sync')[1];
-    await handler({});
-    expect(appModule.showToast).toHaveBeenCalledWith('Firestore primário sincronizado.', 'success');
-  });
-
-  it('toggle-global-sync pauses remote sync and persists the preference', () => {
-    const dispatchSpy = vi.spyOn(document, 'dispatchEvent');
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'toggle-global-sync')[1];
-
-    handler({});
-
-    expect(storeModule.state.config.globalSyncPaused).toBe(true);
-    expect(storeModule.scheduleSave).toHaveBeenCalled();
-    expect(appModule.showToast).toHaveBeenCalledWith(
-      'Sync global pausado. O salvamento local continua ativo.',
-      'info'
-    );
-    expect(dispatchSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'app:globalSyncPauseChanged',
-        detail: expect.objectContaining({ paused: true }),
-      })
-    );
-  });
-
-  it('sync-center-smart-sync warns on conflict', async () => {
-    firestoreSync.getFirestoreSyncStatus.mockReturnValue({ conflict: true });
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'sync-center-smart-sync')[1];
-    await handler({});
-    expect(appModule.showToast).toHaveBeenCalledWith(
-      'Firebase tem conflito. Use Mesclar, Baixar ou Enviar local.',
-      'info'
-    );
-  });
-
-  it('sync-center-smart-sync prompts to activate Firestore', async () => {
-    firestoreSync.getFirestoreSyncStatus.mockReturnValue({ configured: false });
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'sync-center-smart-sync')[1];
-    await handler({});
-    expect(appModule.showToast).toHaveBeenCalledWith(
-      'Ative o Firestore primário para sincronizar entre dispositivos. Cloudflare e Drive ficam como backups manuais.',
-      'info'
-    );
-  });
-
-  it('sync-center-import-local calls importData', () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'sync-center-import-local')[1];
-    handler({});
-    expect(configView.importData).toHaveBeenCalled();
-  });
-
-  it('drive-sync-now shows success toast', async () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'drive-sync-now')[1];
-    await handler({});
-    expect(appModule.showToast).toHaveBeenCalledWith('Sincronizado!', 'success');
-  });
-
-  it('drive-sync-now shows error toast on failure', async () => {
-    let rejectFn;
-    driveSync.syncWithDrive.mockImplementation(() => {
-      return new Promise((_, reject) => {
-        rejectFn = reject;
-      });
-    });
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'drive-sync-now')[1];
-    handler({});
-    rejectFn(new Error('fail'));
-    await vi.waitFor(() => {
-      expect(appModule.showToast).toHaveBeenCalledWith('Erro ao sincronizar', 'error');
-    });
-  });
-
-  it('merge-from-drive shows confirmation', () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'merge-from-drive')[1];
-    handler({});
-    expect(appModule.showConfirm).toHaveBeenCalled();
-  });
-
-  it('cloud-merge-remote shows confirmation', () => {
-    const handler = registerAction.mock.calls.find((c) => c[0] === 'cloud-merge-remote')[1];
-    handler({});
-    expect(appModule.showConfirm).toHaveBeenCalled();
+  it('nuvem-sign-out sai e mantém os dados no aparelho', async () => {
+    await handler('nuvem-sign-out')();
+    expect(nuvem.nuvemSignOut).toHaveBeenCalled();
+    expect(appModule.showToast).toHaveBeenCalledWith(expect.stringContaining('continuam neste aparelho'), 'info');
   });
 });

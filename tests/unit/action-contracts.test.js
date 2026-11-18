@@ -398,7 +398,7 @@ describe('data-action contracts', () => {
       './js/views/ciclo-view.js',
       './js/registro-sessao/modal-renderer.js',
       './js/registro-sessao/session-save.js',
-      './js/sync/sync-history.js',
+      './js/sync/nuvem.js',
     ];
 
     for (const mod of requiredModules) {
@@ -444,13 +444,10 @@ describe('data-action contracts', () => {
     );
   });
 
-  it('uses sanitized exportable state for local and Drive backups', () => {
+  it('uses sanitized exportable state for local backups', () => {
     const dataMgmtSource = read('src/js/views/config/data-management.js');
-    const driveSource = read('src/js/drive-sync.js');
 
     expect(dataMgmtSource).toContain('createExportableState()');
-    expect(driveSource).toContain('createExportableState()');
-    expect(driveSource).not.toContain('JSON.stringify(state)');
   });
 
   it('keeps EstudoApp namespace values live for mutable module exports', () => {
@@ -463,29 +460,15 @@ describe('data-action contracts', () => {
   // O contrato "grafo de módulos bundleável" vive em bundle-graph.test.js:
   // precisa de ambiente node (a API do esbuild rejeita o TextEncoder do jsdom).
 
-  it('refreshes stale config sync indicators through the dedicated sync status UI', () => {
+  it('updates the sync indicator from the nuvem status event without re-rendering the page', () => {
     const mainSource = read('src/js/main.js');
-    const syncStatusSource = read('src/js/sync/sync-status-ui.js');
+    const statusSource = read('src/js/sync/nuvem-status-ui.js');
     const indexSource = read('src/index.html');
 
-    expect(mainSource).not.toContain('CONFIG_SYNC_RENDER_THROTTLE_MS');
-    expect(mainSource).not.toContain('scheduleConfigSyncRender');
-    expect(indexSource).toContain('data-action="sync-now"');
-    expect(syncStatusSource).toMatch(
-      /document\.addEventListener\(["']app:firestoreSyncStatus["']/,
-    );
-    expect(syncStatusSource).toMatch(
-      /document\.addEventListener\(["']app:primarySyncStatus["']/,
-    );
-    expect(syncStatusSource).toMatch(
-      /document\.addEventListener\(["']app:globalSyncPauseChanged["']/,
-    );
-    expect(syncStatusSource).toMatch(
-      /document\.addEventListener\(["']app:cloudSyncStatus["']/,
-    );
-    expect(syncStatusSource).toContain('refreshConfigSyncSurface');
-    expect(syncStatusSource).toContain('cf-sync-conflict');
-    expect(syncStatusSource).not.toContain('renderCurrentView');
+    expect(mainSource).toContain('initNuvemStatusUI()');
+    expect(indexSource).toContain('data-action="toggle-sync-popover"');
+    expect(statusSource).toMatch(/document\.addEventListener\(["']app:nuvemStatus["']/);
+    expect(statusSource).not.toContain('renderCurrentView');
   });
 
   it('removes isolated credentials when clearing all app data', () => {

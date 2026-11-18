@@ -69,9 +69,8 @@ describe('import/export safety contracts', () => {
 
     for (const action of [
       "registerAction('export-data'",
-      "registerAction('restore-backup'",
-      "registerAction('cloud-conflict-export-local'",
-      "registerAction('sync-center-export-local'"
+      "registerAction('import-data'",
+      "registerAction('restore-backup'"
     ]) {
       expect(source).toContain(action);
     }

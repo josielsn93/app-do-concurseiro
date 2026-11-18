@@ -18,15 +18,9 @@ const FIXTURES = {
     '<script type="module" src="js/main.js?v=9.02"></script>',
     ''
   ].join('\n'),
-  'src/js/sync/sync-diagnostic.js': [
-    "import { state } from '../store.js?v=8.37';",
-    "const DIAGNOSTIC_BUILD_VERSION = '9.02';",
-    ''
-  ].join('\n'),
   'tests/unit/css-architecture.test.js': [
     "expect(html).toContain('css/styles.css?v=9.02');",
     "expect(serviceWorker).toContain(\"APP_VERSION = '9.02'\");",
-    "expect(syncDiagnostic).toContain(\"DIAGNOSTIC_BUILD_VERSION = '9.02'\");",
     ''
   ].join('\n')
 };
@@ -79,7 +73,7 @@ describe('nextVersion', () => {
 });
 
 describe('bumpFiles', () => {
-  it('bumps the version in the four synchronized files', () => {
+  it('bumps the version in the three synchronized files', () => {
     writeFixtures();
 
     const result = bumpFiles(root);
@@ -94,25 +88,20 @@ describe('bumpFiles', () => {
     expect(html).not.toContain('9.02');
     expect(html.match(/\?v=9\.03/g)).toHaveLength(4);
 
-    expect(read('src/js/sync/sync-diagnostic.js')).toContain(
-      "DIAGNOSTIC_BUILD_VERSION = '9.03';"
-    );
-
     const testFile = read('tests/unit/css-architecture.test.js');
     expect(testFile).toContain("'css/styles.css?v=9.03'");
     expect(testFile).toContain("APP_VERSION = '9.03'");
-    expect(testFile).toContain("DIAGNOSTIC_BUILD_VERSION = '9.03'");
     expect(testFile).not.toContain('9.02');
   });
 
   it('never touches the frozen ?v=8.37 ES module import specifiers', () => {
-    writeFixtures();
+    writeFixtures({
+      'src/index.html': FIXTURES['src/index.html'] + "<script>import('./js/store.js?v=8.37')</script>\n",
+    });
 
     bumpFiles(root);
 
-    expect(read('src/js/sync/sync-diagnostic.js')).toContain(
-      "import { state } from '../store.js?v=8.37';"
-    );
+    expect(read('src/index.html')).toContain("store.js?v=8.37'");
   });
 
   it('accepts an explicit target version', () => {

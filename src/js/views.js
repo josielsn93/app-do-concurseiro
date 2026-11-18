@@ -120,14 +120,10 @@ export {
   setTheme,
   updateConfig,
   toggleConfig,
-  toggleCfSync,
   updateFrequencia,
-  openDriveModal,
-  driveDisconnect,
   archiveOldEvents,
   exportData,
   importData,
-  restoreBackupFromSelectedSource,
   clearAllData,
 } from './views/config-view.js?v=8.37';
 export {

@@ -115,12 +115,9 @@ test.describe('Fase 6 - Release Gate e Validacao de Caos', () => {
     await expect(exportBtn).toBeVisible();
     await expect(exportBtn).toContainText('Exportar');
 
-    const restoreBtn = page.locator('[data-action="open-restore-preview"]');
-    await expect(restoreBtn).toBeVisible();
-
-    const exportBeforeBtn = page.locator('[data-action="export-data"]').last();
-    await expect(exportBeforeBtn).toBeVisible();
-    await expect(exportBeforeBtn).toContainText('Exportar antes de restaurar');
+    const importBtn = page.locator('[data-testid="backup-card"] [data-action="import-data"]');
+    await expect(importBtn).toBeVisible();
+    await expect(importBtn).toContainText('Importar');
   });
 
   test('20 edicoes rapidas com Firestore ligado continuam locais e persistentes', async ({
@@ -171,99 +168,6 @@ test.describe('Fase 6 - Release Gate e Validacao de Caos', () => {
         )
       )
       .toBe(20);
-  });
-
-  test('permissao negada no Firestore pede acao sem modal e preserva local', async ({ page }) => {
-    const state = createE2EState();
-    state.eventos.push({
-      id: 'ev_permission_local',
-      titulo: 'Local preservado com permissao negada',
-      data: '2026-05-02',
-      dataEstudo: '2026-05-02',
-      duracao: 30,
-      status: 'agendado',
-      tempoAcumulado: 0,
-      tipo: 'conteudo',
-      discId: 'disc_1',
-      assId: 'ass_1',
-      habito: null,
-      criadoEm: '2026-05-02T10:00:00.000Z',
-    });
-    state.config.firestoreSync = {
-      enabled: true,
-      mode: 'primary',
-      configured: true,
-      signedIn: true,
-      hasPendingWrites: true,
-      lastError: 'permission-denied',
-    };
-
-    await seedLegacyState(page, state);
-    await page.goto('/');
-    await page.waitForFunction(() => typeof window.EstudoApp?.navigate === 'function');
-    await page.evaluate(() => {
-      window.state.config.firestoreSync.lastError = 'permission-denied';
-      window.state.config.firestoreSync.hasPendingWrites = true;
-    });
-    await page.click('[data-view="config"]');
-
-    const syncCenter = page.locator('[data-testid="sync-center"]');
-    await expect(syncCenter).toBeVisible();
-    await expect(page.locator('[data-summary-source="firebase"]')).toContainText('Firebase');
-    const firebaseSource = await openSyncSourceAdvanced(page, 'firebase');
-    await expect(firebaseSource).toContainText('permission-denied');
-    await expect(page.locator('#modal-prompt')).not.toHaveClass(/show|active/);
-    await expect
-      .poll(() =>
-        page.evaluate(() => window.state.eventos.some((e) => e.id === 'ev_permission_local'))
-      )
-      .toBe(true);
-  });
-
-  test('erro 500 do Firestore preserva outbox visual sem modal bloqueante', async ({ page }) => {
-    const state = createE2EState();
-    state.eventos.push({
-      id: 'ev_500_local',
-      titulo: 'Local preservado com erro 500',
-      data: '2026-05-02',
-      dataEstudo: '2026-05-02',
-      duracao: 30,
-      status: 'agendado',
-      tempoAcumulado: 0,
-      tipo: 'conteudo',
-      discId: 'disc_1',
-      assId: 'ass_1',
-      habito: null,
-      criadoEm: '2026-05-02T10:00:00.000Z',
-    });
-    state.config.firestoreSync = {
-      enabled: true,
-      mode: 'primary',
-      configured: true,
-      signedIn: true,
-      hasPendingWrites: true,
-      lastError: '500 internal server error',
-      pending: {
-        status: 'pending',
-        attempts: 2,
-        queuedAt: '2026-05-02T10:00:00.000Z',
-        nextAttemptAt: '2026-05-02T10:05:00.000Z',
-      },
-    };
-    state.config.syncHealth = { failureCount: 3 };
-
-    await seedLegacyState(page, state);
-    await page.goto('/');
-    await page.click('[data-view="config"]');
-
-    const syncCenter = page.locator('[data-testid="sync-center"]');
-    await expect(syncCenter).toBeVisible();
-    const firebaseSource = await openSyncSourceAdvanced(page, 'firebase');
-    await expect(firebaseSource).toContainText('Retries');
-    await expect(page.locator('#modal-prompt')).not.toHaveClass(/show|active/);
-    await expect
-      .poll(() => page.evaluate(() => window.state.eventos.some((e) => e.id === 'ev_500_local')))
-      .toBe(true);
   });
 
   test('export apos conflito nao carrega credenciais nem detalhes transientes', async ({
@@ -420,40 +324,4 @@ test.describe('Fase 6 - Release Gate e Validacao de Caos', () => {
       .toBe(true);
   });
 
-  test('conflito de entidade mesma ID gera CTA de resolucao', async ({ page }) => {
-    const state = createE2EState();
-    state.config.firestoreSync = {
-      enabled: true,
-      mode: 'primary',
-      configured: true,
-      signedIn: true,
-      conflict: {
-        type: 'entity-conflict',
-        detectedAt: '2026-05-01T12:00:00.000Z',
-        total: 1,
-        items: [
-          {
-            key: 'eventos/ev_same_entity',
-            collection: 'eventos',
-            id: 'ev_same_entity',
-            hint: 'collision',
-            localRevision: 5,
-            remoteRevision: 5,
-            localUpdatedAt: '2026-05-01T11:50:00.000Z',
-            remoteUpdatedAt: '2026-05-01T11:55:00.000Z',
-          },
-        ],
-      },
-    };
-
-    await seedLegacyState(page, state);
-    await page.goto('/');
-    await page.click('[data-view="config"]');
-
-    const conflict = page.locator('[data-testid="sync-source-conflict-entities"]').first();
-    await expect(conflict).toBeVisible();
-    await expect(conflict).toContainText('Entidades afetadas');
-    await expect(conflict.locator('[data-action="entity-conflict-keep-local"]')).toBeVisible();
-    await expect(conflict.locator('[data-action="entity-conflict-keep-remote"]')).toBeVisible();
-  });
 });

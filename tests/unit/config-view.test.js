@@ -5,10 +5,7 @@ describe('views/config-view.js', () => {
   let storeModule;
   let logicModule;
   let componentsModule;
-  let syncCenter;
-  let firestoreSync;
-  let cloudSync;
-  let driveSync;
+  let nuvem;
   let configView;
 
   beforeEach(async () => {
@@ -55,36 +52,8 @@ describe('views/config-view.js', () => {
       invalidateRevCache: vi.fn(),
     };
     componentsModule = { renderCurrentView: vi.fn() };
-    syncCenter = {
-      buildSyncCenterModel: vi.fn(() => ({
-        health: { status: 'synced', metrics: {} },
-        quiet: {
-          title: 'Tudo salvo automaticamente',
-          detail: 'Suas alterações ficam salvas neste dispositivo.',
-          tone: 'ok',
-          primaryAction: null,
-        },
-        performanceMetrics: [],
-        sources: [],
-      })),
-    };
-    firestoreSync = {
-      getFirestoreSyncStatus: vi.fn(() => ({ configured: false })),
-      previewFirestoreRestore: vi.fn(() => Promise.resolve({ eventos: [{ id: 'fs_remote' }], config: {} })),
-      pullFromFirestore: vi.fn(),
-    };
-    cloudSync = {
-      setSyncCreds: vi.fn(() => Promise.resolve()),
-      forceCloudflareSync: vi.fn(() => Promise.resolve()),
-      pushToCloudflare: vi.fn(() => Promise.resolve(true)),
-      mergeFromCloudflare: vi.fn(() => Promise.resolve(true)),
-      previewCloudflareRestore: vi.fn(() => Promise.resolve({ eventos: [{ id: 'cf_remote' }], config: {} })),
-      pullFromCloudflare: vi.fn(),
-    };
-    driveSync = {
-      disconnectDrive: vi.fn(),
-      previewDriveRestore: vi.fn(() => Promise.resolve({ eventos: [{ id: 'drive_remote' }], config: {} })),
-      pullFromDrive: vi.fn(),
+    nuvem = {
+      getNuvemStatus: vi.fn(() => ({ configured: true, state: 'off', uid: null, email: null, lastSyncAt: null, error: null, pending: false })),
     };
     vi.doMock('../../src/js/backup-restore.js?v=8.37', () => ({
       previewRestoreImpact: vi.fn(() => ({
@@ -113,10 +82,7 @@ describe('views/config-view.js', () => {
     vi.doMock('../../src/js/store.js?v=8.37', () => storeModule);
     vi.doMock('../../src/js/logic.js?v=8.37', () => logicModule);
     vi.doMock('../../src/js/components.js?v=8.37', () => componentsModule);
-    vi.doMock('../../src/js/sync/sync-center.js?v=8.37', () => syncCenter);
-    vi.doMock('../../src/js/sync/firestore-sync-engine.js?v=8.37', () => firestoreSync);
-    vi.doMock('../../src/js/cloud-sync.js?v=8.37', () => cloudSync);
-    vi.doMock('../../src/js/drive-sync.js?v=8.37', () => driveSync);
+    vi.doMock('../../src/js/sync/nuvem.js?v=8.37', () => nuvem);
 
     configView = await import('../../src/js/views/config-view.js?v=8.37');
   });
@@ -197,20 +163,6 @@ describe('views/config-view.js', () => {
     });
   });
 
-  describe('openDriveModal()', () => {
-    it('opens the drive modal', () => {
-      configView.openDriveModal();
-      expect(appModule.openModal).toHaveBeenCalledWith('modal-drive');
-    });
-  });
-
-  describe('driveDisconnect()', () => {
-    it('calls disconnectDrive', () => {
-      configView.driveDisconnect();
-      expect(driveSync.disconnectDrive).toHaveBeenCalled();
-    });
-  });
-
   describe('archiveOldEvents()', () => {
     it('shows info toast when no events to archive', () => {
       storeModule.state.eventos = [];
@@ -253,201 +205,32 @@ describe('views/config-view.js', () => {
     });
   });
 
-  describe('toggleCfSync()', () => {
-    it('shows error when URL is missing', async () => {
-      const el = { value: '' };
-      vi.spyOn(document, 'getElementById').mockReturnValue(el);
-      storeModule.state.config.cfTokenSaved = false;
-      await configView.toggleCfSync(true);
-      expect(appModule.showToast).toHaveBeenCalledWith(
-        'Preencha a URL do Worker e o Token antes de ativar.',
-        'error'
-      );
+  describe('renderConfig(): conta e backup', () => {
+    it('mostra o cartão de conta com "Entrar com Google" quando não há login', () => {
+      const el = document.createElement('div');
+      configView.renderConfig(el);
+      expect(el.innerHTML).toContain('data-testid="conta-sync"');
+      expect(el.innerHTML).toContain('data-action="nuvem-sign-in"');
+      expect(el.innerHTML).not.toMatch(/Central de Sincronização|Cloudflare|Google Drive/);
     });
 
-    it('disables sync without validation', async () => {
-      await configView.toggleCfSync(false);
-      expect(storeModule.state.config.cfSyncEnabled).toBe(false);
-      expect(storeModule.scheduleSave).toHaveBeenCalled();
-      expect(componentsModule.renderCurrentView).toHaveBeenCalled();
-    });
-  });
-
-  describe('restoreBackupFromSelectedSource()', () => {
-    it('calls importData for local source', () => {
-      vi.spyOn(document, 'getElementById').mockReturnValue({ value: 'local' });
-      configView.restoreBackupFromSelectedSource();
-      expect(appModule.openModal).not.toHaveBeenCalled();
-    });
-
-    it('shows error when Firestore not enabled', () => {
-      vi.spyOn(document, 'getElementById').mockReturnValue({ value: 'firestore' });
-      storeModule.state.config.firestoreSync = { enabled: false };
-      configView.restoreBackupFromSelectedSource();
-      expect(appModule.showToast).toHaveBeenCalledWith(
-        'Ative o Firestore e entre com Google antes de restaurar por ele.',
-        'error'
-      );
-    });
-
-    it('shows error when Cloudflare not configured', () => {
-      vi.spyOn(document, 'getElementById').mockReturnValue({ value: 'cloudflare' });
-      storeModule.state.config.cfSyncEnabled = false;
-      configView.restoreBackupFromSelectedSource();
-      expect(appModule.showToast).toHaveBeenCalledWith(
-        'Configure a sincronização Cloudflare antes de restaurar por ela.',
-        'error'
-      );
-    });
-
-    it('shows error when Drive not connected', () => {
-      vi.spyOn(document, 'getElementById').mockReturnValue({ value: 'drive' });
-      storeModule.state.driveFileId = null;
-      configView.restoreBackupFromSelectedSource();
-      expect(appModule.showToast).toHaveBeenCalledWith(
-        'Conecte o Google Drive antes de restaurar por ele.',
-        'error'
-      );
-    });
-
-    it('previews Firestore remote data before pulling it', async () => {
-      document.body.innerHTML = `
-        <div id="modal-prompt">
-          <h2 id="modal-prompt-title"></h2>
-          <div id="modal-prompt-body"></div>
-          <button id="modal-prompt-save"></button>
-        </div>
-      `;
-      vi.spyOn(document, 'getElementById').mockImplementation((id) => {
-        if (id === 'backup-restore-source') return { value: 'firestore' };
-        return document.querySelector(`#${id}`);
-      });
-      storeModule.state.config.firestoreSync = { enabled: true };
-
-      await configView.restoreBackupFromSelectedSource();
-
-      expect(firestoreSync.previewFirestoreRestore).toHaveBeenCalled();
-      expect(firestoreSync.pullFromFirestore).not.toHaveBeenCalled();
-      expect(appModule.openModal).toHaveBeenCalledWith('modal-prompt');
-
-      document.getElementById('modal-prompt-save').onclick();
-      expect(firestoreSync.pullFromFirestore).toHaveBeenCalledWith(true, {
-        discardPending: true,
-      });
-    });
-
-    it('previews Cloudflare remote data before pulling it', async () => {
-      document.body.innerHTML = `
-        <div id="modal-prompt">
-          <h2 id="modal-prompt-title"></h2>
-          <div id="modal-prompt-body"></div>
-          <button id="modal-prompt-save"></button>
-        </div>
-      `;
-      vi.spyOn(document, 'getElementById').mockImplementation((id) => {
-        if (id === 'backup-restore-source') return { value: 'cloudflare' };
-        return document.querySelector(`#${id}`);
-      });
-      storeModule.state.config.cfSyncEnabled = true;
-      storeModule.state.config.cfUrl = 'https://worker.example';
-      storeModule.state.config.cfToken = 'saved-token';
-
-      await configView.restoreBackupFromSelectedSource();
-
-      expect(cloudSync.previewCloudflareRestore).toHaveBeenCalled();
-      expect(cloudSync.pullFromCloudflare).not.toHaveBeenCalled();
-      expect(appModule.openModal).toHaveBeenCalledWith('modal-prompt');
-    });
-
-    it('previews Drive remote data before pulling it', async () => {
-      document.body.innerHTML = `
-        <div id="modal-prompt">
-          <h2 id="modal-prompt-title"></h2>
-          <div id="modal-prompt-body"></div>
-          <button id="modal-prompt-save"></button>
-        </div>
-      `;
-      vi.spyOn(document, 'getElementById').mockImplementation((id) => {
-        if (id === 'backup-restore-source') return { value: 'drive' };
-        return document.querySelector(`#${id}`);
-      });
-      storeModule.state.driveFileId = 'drive-file';
-
-      await configView.restoreBackupFromSelectedSource();
-
-      expect(driveSync.previewDriveRestore).toHaveBeenCalled();
-      expect(driveSync.pullFromDrive).not.toHaveBeenCalled();
-      expect(appModule.openModal).toHaveBeenCalledWith('modal-prompt');
+    it('logado, mostra a conta e "Sincronizar agora"', () => {
+      nuvem.getNuvemStatus.mockReturnValue({ configured: true, state: 'synced', uid: 'u', email: 'eu@x.com', lastSyncAt: null, error: null, pending: false });
+      const el = document.createElement('div');
+      configView.renderConfig(el);
+      expect(el.innerHTML).toContain('eu@x.com');
+      expect(el.innerHTML).toContain('data-action="nuvem-sync-now"');
     });
   });
 
   describe('renderConfig()', () => {
-    it('renders sync labels with Portuguese accents', () => {
+    it('renders a backup card with export and import only', () => {
       const el = document.createElement('div');
-
       configView.renderConfig(el);
-
-      expect(el.innerHTML).toContain('Central de Sincronização');
-      expect(el.innerHTML).toContain('Sincronizar agora');
-      expect(el.innerHTML).not.toContain('Sincronizacao');
-    });
-
-    it('renders the manual-sync button in the Sync Center', () => {
-      syncCenter.buildSyncCenterModel.mockReturnValue({
-        health: { status: 'idle', metrics: {} },
-        quiet: { title: '', detail: '', tone: 'idle', primaryAction: null },
-        performanceMetrics: [],
-        sources: [
-          { id: 'firebase', title: 'Firebase', enabled: false, configured: false, conflict: null },
-          { id: 'cloudflare', title: 'Cloudflare', enabled: false, configured: false, conflict: null },
-          { id: 'drive', title: 'Google Drive', enabled: false, configured: false, conflict: null },
-        ],
-        manualSyncEnabled: true,
-      });
-      const el = document.createElement('div');
-
-      configView.renderConfig(el);
-
-      expect(el.innerHTML).toContain('Sincronizar agora');
-      expect(el.innerHTML).toContain('data-action="manual-sync-all"');
-    });
-
-    it('shows manual-mode labels in the Data card', () => {
-      storeModule.state.config.localBackupAt = '2026-04-30T10:00:00.000Z';
-      storeModule.state.config.lastManualSyncAt = '2026-04-30T10:15:00.000Z';
-      syncCenter.buildSyncCenterModel.mockReturnValue({
-        health: { status: 'idle', metrics: {} },
-        quiet: { title: '', detail: '', tone: 'idle', primaryAction: null },
-        performanceMetrics: [],
-        sources: [],
-        manualSyncEnabled: true,
-      });
-      const el = document.createElement('div');
-
-      configView.renderConfig(el);
-
-      expect(el.innerHTML).toContain('Último salvamento local:');
-      expect(el.innerHTML).toContain('Última sincronização manual:');
-    });
-  });
-
-  describe('renderConfig()', () => {
-    it('renders a unified Backup & Restauração card with source history and safe restore actions', () => {
-      storeModule.state.config.localBackupAt = '2026-04-30T10:00:00.000Z';
-      storeModule.state.config.firestoreSync = { remoteUpdatedAt: '2026-04-30T10:05:00.000Z' };
-      storeModule.state.config.cfLastSyncAt = '2026-04-30T10:10:00.000Z';
-      storeModule.state.lastSync = '2026-04-30T10:15:00.000Z';
-      const el = document.createElement('div');
-
-      configView.renderConfig(el);
-
-      expect(el.innerHTML).toContain('Backup &amp; Restauração');
-      expect(el.innerHTML).toContain('data-testid="backup-center"');
-      expect(el.innerHTML).toContain('data-testid="sync-center"');
-      expect(el.innerHTML).toContain('Sincronizar agora');
-      expect(el.innerHTML).toContain('data-action="manual-sync-all"');
-      expect(el.innerHTML).toContain('data-action="open-restore-preview"');
-      expect(el.innerHTML).toContain('Exportar antes de restaurar');
+      expect(el.innerHTML).toContain('data-testid="backup-card"');
+      expect(el.innerHTML).toContain('data-action="export-data"');
+      expect(el.innerHTML).toContain('data-action="import-data"');
+      expect(el.innerHTML).not.toContain('backup-restore-source');
     });
 
     it('renders the Avançado collapsed section with destructive actions', () => {

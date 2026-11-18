@@ -1,8 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createBaseState } from "../helpers/state-builders.js";
 import { loadAppModules } from "../helpers/module-loader.js";
-import { mergeStudyStates } from "../../src/js/sync/sync-center.js";
-import { computeRetaFinalPlanDigest } from "../../src/js/sync/reta-final-protocol.js";
 
 let store;
 
@@ -160,81 +158,6 @@ describe("store — reta final e planejamentoArquivado", () => {
     });
   });
 
-  describe("mergeStudyStates (LWW do planejamento)", () => {
-    it("plano reta_final remoto mais novo vence inteiro e leva planejamentoArquivado", () => {
-      const local = createBaseState({
-        planejamento: {
-          ativo: true,
-          tipo: "ciclo",
-          disciplinas: ["disc_1"],
-          sequencia: [],
-          updatedAt: "2026-07-01T10:00:00.000Z",
-        },
-      });
-      local.planejamentoArquivado = null;
-
-      const remote = createBaseState({ planejamento: createRetaFinalPlan() });
-      remote.planejamentoArquivado = createArquivado();
-
-      const merged = mergeStudyStates(local, remote);
-
-      expect(merged.planejamento.tipo).toBe("reta_final");
-      expect(merged.planejamento.retaFinal.blocos[0].id).toBe("rf_1");
-      // arquivar + substituir é mutação atômica: o arquivado viaja com o plano
-      expect(merged.planejamentoArquivado).toEqual(createArquivado());
-    });
-
-    it("plano local mais novo mantém plano e arquivado locais", () => {
-      const local = createBaseState({
-        planejamento: createRetaFinalPlan({
-          updatedAt: "2026-07-08T10:00:00.000Z",
-        }),
-      });
-      local.planejamentoArquivado = createArquivado();
-
-      const remote = createBaseState({
-        planejamento: {
-          ativo: true,
-          tipo: "ciclo",
-          disciplinas: ["disc_1"],
-          sequencia: [],
-          updatedAt: "2026-07-01T10:00:00.000Z",
-        },
-      });
-      remote.planejamentoArquivado = null;
-
-      const merged = mergeStudyStates(local, remote);
-
-      expect(merged.planejamento.tipo).toBe("reta_final");
-      expect(merged.planejamentoArquivado).toEqual(createArquivado());
-    });
-
-    it("restauração propaga: remoto mais novo com plano ciclo e arquivado null", () => {
-      const local = createBaseState({
-        planejamento: createRetaFinalPlan({
-          updatedAt: "2026-07-08T10:00:00.000Z",
-        }),
-      });
-      local.planejamentoArquivado = createArquivado();
-
-      const remote = createBaseState({
-        planejamento: {
-          ativo: true,
-          tipo: "ciclo",
-          disciplinas: ["disc_1"],
-          sequencia: [],
-          updatedAt: "2026-07-09T10:00:00.000Z",
-        },
-      });
-      remote.planejamentoArquivado = null;
-
-      const merged = mergeStudyStates(local, remote);
-
-      expect(merged.planejamento.tipo).toBe("ciclo");
-      expect(merged.planejamentoArquivado).toBeNull();
-    });
-  });
-
   describe("createExportableState", () => {
     it("inclui planejamentoArquivado e retaFinal no export", () => {
       store.setState(
@@ -249,88 +172,5 @@ describe("store — reta final e planejamentoArquivado", () => {
       expect(exported.planejamento.retaFinal.blocos).toHaveLength(1);
       expect(exported.planejamentoArquivado).toEqual(createArquivado());
     });
-  });
-});
-
-describe("mergeStudyStates — Reta Final v2 archive and history", () => {
-  function makePlan(blockPatch = {}, revision = 4) {
-    return {
-      ativo: true,
-      tipo: "reta_final",
-      planId: "rf-store-plan",
-      schemaVersionRetaFinal: 2,
-      revision,
-      updatedAt: "2026-10-19T10:00:00.000Z",
-      disciplinas: ["disc_1"],
-      retaFinal: {
-        dataFinal: "2026-12-31",
-        minutosPadrao: 60,
-        blocos: [
-          {
-            id: "rf_1",
-            discId: "disc_1",
-            topicos: [{ assId: "ass_1", aulaId: null }],
-            minutos: 60,
-            dataPlanejada: "2026-10-20",
-            dataOriginal: "2026-10-20",
-            ordem: 0,
-            status: "pendente",
-            ...blockPatch,
-          },
-        ],
-      },
-    };
-  }
-
-  it("preserves the archived plan, events, and history on a same-plan merge", () => {
-    const basePlan = makePlan();
-    const event = {
-      id: "ev-rf-1",
-      rfBlocoId: "rf_1",
-      status: "estudei",
-      data: "2026-10-20",
-      tempoAcumulado: 5400,
-      criadoEm: "2026-10-20T12:00:00.000Z",
-    };
-    const history = {
-      id: "history-1",
-      planId: "rf-store-plan",
-      revision: 3,
-      createdAt: "2026-10-18T12:00:00.000Z",
-      summary: "registro histórico",
-    };
-    const local = createBaseState({
-      planejamento: makePlan({ dataPlanejada: "2026-10-22" }, 5),
-      editais: [
-        {
-          id: "ed-1",
-          disciplinas: [
-            { id: "disc_1", assuntos: [{ id: "ass_1" }], aulas: [] },
-          ],
-        },
-      ],
-      eventos: [event],
-      revisoes: [history],
-      planejamentoArquivado: createArquivado(),
-      config: {
-        firestoreSync: {
-          basePlan,
-          baseDigest: computeRetaFinalPlanDigest(basePlan),
-        },
-      },
-    });
-    const remote = createBaseState({
-      planejamento: makePlan({}, 6),
-      planejamentoArquivado: null,
-    });
-    const merged = mergeStudyStates(local, remote);
-    expect(merged.planejamento.retaFinal.blocos[0]).toMatchObject({
-      dataPlanejada: "2026-10-22",
-      status: "concluido",
-    });
-    expect(merged.planejamentoArquivado).toEqual(createArquivado());
-    expect(merged.eventos).toEqual([event]);
-    expect(merged.revisoes).toEqual([history]);
-    expect(merged.planejamento.revision).toBe(6);
   });
 });

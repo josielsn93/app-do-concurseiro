@@ -6,17 +6,13 @@ import * as app from './app.js?v=8.37';
 import * as logic from './logic.js?v=8.37';
 import * as components from './components.js?v=8.37';
 import * as views from './views.js?v=8.37';
-import * as drive_sync from './drive-sync.js?v=8.37';
-import * as cloud_sync from './cloud-sync.js?v=8.37';
 import * as registro from './registro-sessao.js?v=8.37';
 import * as utils from './utils.js?v=8.37';
 import * as wizard from './planejamento-wizard.js?v=8.37';
 
 import * as relevance from './relevance.js?v=8.37';
 import * as lesson_mapper from './lesson-mapper.js?v=8.37';
-import * as firestore_sync from './sync/firestore-sync-engine.js?v=8.37';
-import * as sync_coordinator from './sync/sync-coordinator.js?v=8.37';
-import { initSyncStatusUI } from './sync/sync-status-ui.js?v=8.37';
+import { initNuvemStatusUI } from './sync/nuvem-status-ui.js?v=8.37';
 import { debugLog } from './debug.js?v=8.37';
 
 // Import UI helpers and action dispatcher
@@ -38,15 +34,11 @@ const exposedModules = [
   logic,
   components,
   views,
-  drive_sync,
-  cloud_sync,
   registro,
   utils,
   wizard,
   relevance,
   lesson_mapper,
-  firestore_sync,
-  sync_coordinator,
 ];
 
 for (const mod of exposedModules) {
@@ -139,7 +131,7 @@ app.initSaveStatusIndicator();
 app.init();
 
 // Initialize sync status UI component (decoupled from renderCurrentView)
-initSyncStatusUI();
+initNuvemStatusUI();
 
 // ============================================================
 // DOMAIN EVENT LISTENERS (Etapa 2 - Quebrando ciclos)

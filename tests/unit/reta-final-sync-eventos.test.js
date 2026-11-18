@@ -7,7 +7,7 @@ import {
   createAssunto,
   createEdital
 } from '../helpers/state-builders.js';
-import { mergeStudyStates } from '../../src/js/sync/sync-center.js';
+import { mergeCloudStates } from '../../src/js/sync/cloud-merge.js';
 
 // Espelho de cycle-sync-occupied-slots.test.js para a Reta Final: o agendador
 // materializa eventos por bloco (rfBlocoId), nunca re-popula bloco ocupado por
@@ -657,7 +657,7 @@ describe('notas importadas da Reta Final', () => {
     const remote = createBaseState({
       eventos: [{ ...eventoLegado, updatedAt: '2026-07-10T09:30:00.000Z' }],
     });
-    const merged = mergeStudyStates(local, remote);
+    const merged = mergeCloudStates(local, remote);
 
     expect(merged.eventos[0].notas).toBe(notas);
     expect(merged.eventos[0].updatedAt).toBe(new Date(HOJE + 'T10:00:00').toISOString());

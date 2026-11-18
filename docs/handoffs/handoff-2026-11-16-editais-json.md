@@ -106,3 +106,14 @@
 - `E2E_ROOT=dist` roda a suíte e2e contra o build (`npm run test:e2e:dist`).
 - Adiado para a fase 2: remover a cópia legada `main_state` e o backup de emergência no localStorage (lidos no boot e em `reta-final-commit.js`).
 - E2E neste ambiente: um grupo de testes já falhava na `main` (visuais de tema, importação de edital, offline-import, phase6) por corrida de boot/tempo; mesmas falhas na branch, sem regressão nova.
+
+## Fase 2 (sincronização nova) — branch `fase2-sync-nuvem`
+
+- Modelo: um documento por conta, `users/{uid}/estado/atual` = `{v, format, deviceId, updatedAt, rawBytes, data}`; `data` é o estado (sem config do aparelho) em gzip+base64 (~75 KB para o estado real de 690 KB).
+- `src/js/sync/cloud-merge.js` (puro): união por id com tombstones, plano da mesma identidade por `updatedAt`, identidades diferentes → importação mais nova vence (`retaFinal.importadoEm`), estudos do plano antigo remapeados por `dataOriginal|ordem`, agendamentos/edital do antigo apagados com tombstone. `newer` decide campos sem data (preferências etc.).
+- `src/js/sync/cloud-codec.js`: payload + codificação. `src/js/sync/nuvem-sync.js`: motor com dependências injetadas (transação ler→mesclar→gravar, debounce 3 s, `onSnapshot`, retry 5/15/60 s, sem retry em permission-denied, migração lendo `snapshots/main`). `src/js/sync/nuvem.js`: liga Firebase/store/eventos (`stateSaved` sem `skipFirestoreSync` e `nuvem:localChange`). `src/js/sync/nuvem-status-ui.js`: pílula do topo. `src/js/views/config/conta-sync.js`: cartões de conta, backup e avançado. `src/js/sync/tombstones.js`: `recordSyncTombstone`.
+- Removidos: motor Firestore antigo, protocolo Reta Final, adoção legada, migração de entidades, outbox, coordenador, sync manual, central de sync, diálogos, Cloudflare e Google Drive (código e UI), conflitos da Reta Final (view, ações e `resolveRetaFinalConflictAtomically`), `reta-final-merge.js`. `credentials.js` e `worker/` ficam para a fase 4.
+- `firestore.rules` reescrito (~60 linhas): `estado/atual` validado, `snapshots` só leitura (migração), `aulas` igual, tudo restrito ao UID do dono. O usuário precisa publicar o arquivo inteiro antes do merge.
+- Bundle do Firebase recompilado com `runTransaction`.
+- Testes: novos `cloud-merge`, `cloud-codec`, `nuvem-sync` (dois aparelhos com Firestore em memória), `nuvem-status-ui`, `conta-sync-card`; testes do motor antigo apagados. Unitários: 2.722 passando. E2E no build: só as falhas já conhecidas do ambiente (visuais, importação de edital).
+- Limitação conhecida: importar um backup JSON não apaga na nuvem o que não está no arquivo (a mesclagem é por união). Fase 3 pode ganhar um "restaurar e substituir na nuvem".

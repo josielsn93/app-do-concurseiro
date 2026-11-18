@@ -559,3 +559,11 @@ body {
   padding-inline: 10px;
 }
 
+
+.sync-popover-detail {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  max-width: 280px;
+}

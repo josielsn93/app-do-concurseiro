@@ -35,11 +35,9 @@ import {
 // ── Other module imports for orchestrator functions ──────────────────
 import { renderCurrentView } from './components.js?v=8.37';
 import { initDB, scheduleSave, state } from './store.js?v=8.37';
-import { initGoogleAPIs, updateDriveUI } from './drive-sync.js?v=8.37';
 import { esc } from './utils.js?v=8.37';
 import { initNotifications } from './notifications.js?v=8.37';
-import { initFirestoreSync } from './sync/firestore-sync-engine.js?v=8.37';
-import { initSyncCoordinator } from './sync/sync-coordinator.js?v=8.37';
+import { initNuvem } from './sync/nuvem.js?v=8.37';
 import { clearActiveDashboardDiscCtx } from './state/dashboard-context.js?v=8.37';
 import { setHideConcluidosCiclo } from './views/ciclo-view.js?v=8.37';
 import { reconcilePrincipalEdital } from './views/editais-crud.js';
@@ -82,8 +80,7 @@ export function init() {
       document.dispatchEvent(new Event('app:stateLoaded'));
       applyTheme();
       initNotifications();
-      initSyncCoordinator();
-      initFirestoreSync();
+      initNuvem();
 
       // Restaurar estado da sidebar (collapsed/expanded)
       const sidebarCollapsed = localStorage.getItem('estudo_sidebar_collapsed') === 'true';
@@ -116,14 +113,6 @@ export function init() {
       // houver mais de um edital ativo, pede ao usuário qual é o principal
       // (uma vez por dispositivo). Não toca em sync — só flags em state.editais.
       reconcilePrincipalEdital();
-
-      // Drive: load Google APIs if a client ID was previously saved, but do
-      // NOT trigger any sync. The user starts sync via the manual button.
-      updateDriveUI('disconnected', 'Google Drive');
-      const savedClientId = localStorage.getItem('estudo_drive_client_id');
-      if (savedClientId) {
-        initGoogleAPIs();
-      }
     })
     .catch((err) => {
       console.error('Falha ao inicializar o aplicativo:', err);

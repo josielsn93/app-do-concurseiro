@@ -52,7 +52,7 @@ export {
 
 import { invalidateDiscCache } from './logic/disc.js';
 import { skipPlanejamentoEventBeforeDelete, syncCicloToEventos } from './logic/cycle.js';
-import { recordSyncTombstone } from './sync/sync-center.js?v=8.37';
+import { recordSyncTombstone } from './sync/tombstones.js?v=8.37';
 
 // PROGRESS & DASHBOARD ANALYTICS (extracted to ./logic/progress.js)
 export {

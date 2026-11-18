@@ -100,8 +100,7 @@ const PHASE_1_RESIDUAL_COLOR_CONTRACT_FILES = [
   'src/css/views/revisoes.css',
   'src/js/sw-register.js',
   'src/js/utils.js',
-  'src/js/views/banca-view.js',
-  'src/js/views/config/sync-center.js'
+  'src/js/views/banca-view.js'
 ];
 
 function collectFilesByExtension(dir, extensions, out = []) {
@@ -578,7 +577,6 @@ describe('CSS architecture', () => {
   it('keeps browser cache busting aligned with the current app version', () => {
     const html = read('src/index.html');
     const serviceWorker = read('src/sw.js');
-    const syncDiagnostic = read('src/js/sync/sync-diagnostic.js');
     const appSources = [
       'src/index.html',
       'src/sw.js',
@@ -592,7 +590,6 @@ describe('CSS architecture', () => {
 
     expect(html).toContain('css/styles.css?v=9.87');
     expect(serviceWorker).toContain("APP_VERSION = '9.87'");
-    expect(syncDiagnostic).toContain("DIAGNOSTIC_BUILD_VERSION = '9.87'");
     expect(appSources).not.toMatch(/v=8\.(?:[3-5](?!\d))|APP_VERSION = '8\.(?:[3-5](?!\d))'/);
   });
 
@@ -921,7 +918,6 @@ describe('CSS architecture', () => {
     expect(html).toContain('topbar-timer-btn');
     expect(html).toContain('topbar-search');
     expect(html).toContain('modal-confirm-footer');
-    expect(html).toContain('drive-cloud-icon');
     expect(html).not.toContain('style="order:-1;margin-right:8px;"');
     expect(html).not.toContain('style="max-width:380px;"');
     expect(styles).toContain('.topbar-timer-btn');

@@ -222,68 +222,8 @@ test.describe('App de estudos', () => {
     await expect(page.locator('#search-results')).not.toHaveClass(/open/);
   });
 
-  test('shows Cloudflare sync conflict recovery actions in settings', async ({ page }) => {
+  test('keeps settings account and backup controls inside mobile cards', async ({ page }) => {
     const state = createE2EState();
-    state.config.cfSyncEnabled = true;
-    state.config.cfUrl = 'https://sync.example.test';
-    state.config.cfToken = 'test-token';
-    state.config.cfConflict = {
-      remoteUpdatedAt: '2026-04-19T11:00:00.000Z',
-      remoteDeviceId: 'device-a',
-      detectedAt: '2026-04-19T12:00:00.000Z'
-    };
-
-    await seedLegacyState(page, state);
-    await page.goto('/');
-    await page.click('[data-view="config"]');
-
-    const cloudflareSource = await openSyncSourceAdvanced(page, 'cloudflare');
-    const conflict = cloudflareSource.locator('[data-testid="cf-sync-conflict"]');
-    await expect(conflict).toBeVisible();
-    await expect(conflict).toContainText('Conflito');
-    await expect(conflict.locator('[data-action="cloud-conflict-export-local"]')).toBeVisible();
-    await expect(conflict.locator('[data-action="cloud-conflict-pull-remote"]')).toBeVisible();
-    await expect(conflict.locator('[data-action="cloud-conflict-force-push"]')).toBeVisible();
-  });
-
-  test('refreshes settings sync conflicts after background sync clears them', async ({ page }) => {
-    const state = createE2EState();
-    state.config.cfSyncEnabled = true;
-    state.config.cfUrl = 'https://sync.example.test';
-    state.config.cfTokenSaved = true;
-    state.config.cfConflict = {
-      remoteUpdatedAt: '2026-05-03T13:24:36.000Z',
-      detectedAt: '2026-05-03T13:25:14.000Z'
-    };
-
-    await seedLegacyState(page, state);
-    await page.goto('/');
-    await page.click('[data-view="config"]');
-    await openSyncSourceAdvanced(page, 'cloudflare');
-
-    await expect(page.locator('[data-testid="cf-sync-conflict"]').first()).toBeVisible();
-
-    await page.evaluate(() => {
-      const nextState = structuredClone(window.state);
-      nextState.config.cfConflict = null;
-      window.EstudoApp.setState(nextState);
-      document.dispatchEvent(new CustomEvent('app:firestoreSyncStatus', {
-        detail: { status: 'synced', conflict: null }
-      }));
-      document.dispatchEvent(new CustomEvent('app:cloudSyncStatus', {
-        detail: { status: 'synced', reason: 'push' }
-      }));
-    });
-
-    await expect(page.locator('[data-testid="cf-sync-conflict"]')).toHaveCount(0);
-    await expect(page.locator('[data-testid="sync-center"]')).not.toContainText('Ação necessária');
-  });
-
-  test('keeps settings sync controls inside mobile cards', async ({ page }) => {
-    const state = createE2EState();
-    state.config.cfSyncEnabled = true;
-    state.config.cfUrl = 'https://estudo-sync-api.example.workers.dev';
-    state.config.cfToken = 'test-token';
 
     await page.setViewportSize({ width: 390, height: 844 });
     await seedLegacyState(page, state);
@@ -291,108 +231,20 @@ test.describe('App de estudos', () => {
     await page.waitForFunction(() => typeof window.EstudoApp?.navigate === 'function');
     await page.evaluate(() => window.EstudoApp.navigate('config'));
     await expect(page.locator('#topbar-title')).toHaveText('Configurações', { timeout: 10000 });
+    await expect(page.locator('[data-testid="conta-sync"]')).toBeVisible();
+    await expect(page.locator('[data-testid="backup-card"]')).toBeVisible();
 
-    const cloudflareSource = await openSyncSourceAdvanced(page, 'cloudflare');
-    await cloudflareSource.locator('#config-cf-url').scrollIntoViewIfNeeded();
-
-    const metrics = await page.evaluate(() => {
-      const selectors = [
-        '#main-content',
-        '.config-grid',
-        '.config-card',
-        '.config-card .card-body',
-        '.config-row',
-        '.config-input-group',
-        '.config-toggle-row',
-        '.config-actions-row',
-        '.sync-source-card',
-        '.sync-source-advanced',
-        '.sync-source-config'
-      ];
-      return selectors.flatMap(selector => Array.from(document.querySelectorAll(selector)).map((element, index) => ({
+    const overflow = await page.evaluate(() => {
+      const selectors = ['#main-content', '.config-grid', '.config-card', '.config-card .card-body', '.config-row', '.config-actions-row'];
+      return selectors.flatMap((selector) => Array.from(document.querySelectorAll(selector)).map((element, index) => ({
         selector,
         index,
         clientWidth: Math.round(element.clientWidth),
-        scrollWidth: Math.round(element.scrollWidth)
-      }))).filter(item => item.scrollWidth > item.clientWidth + 1);
+        scrollWidth: Math.round(element.scrollWidth),
+      }))).filter((item) => item.scrollWidth > item.clientWidth + 1);
     });
 
-    expect(metrics).toEqual([]);
-
-    const mobileLayout = await page.evaluate(() => ({
-      formGroups: Array.from(document.querySelectorAll('.sync-source-config .form-group.config-input-group')).map((element) => window.getComputedStyle(element).flexDirection),
-      toggleRow: window.getComputedStyle(document.querySelector('.sync-source-config .config-toggle-row')).flexWrap,
-      credentialTargets: ['#config-cf-url', '#config-cf-token'].map((selector) => {
-        const input = document.querySelector(selector);
-        const rect = input.getBoundingClientRect();
-        const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
-        return {
-          selector,
-          hitSelf: hit === input,
-          height: Math.round(rect.height)
-        };
-      }),
-      enabledVisible: Boolean(document.querySelector('#config-cf-enabled')?.getBoundingClientRect().height),
-      toggleWidths: Array.from(document.querySelectorAll('.config-row .toggle')).map((toggle) => Math.round(toggle.getBoundingClientRect().width)),
-      toggleHeights: Array.from(document.querySelectorAll('.config-row .toggle')).map((toggle) => Math.round(toggle.getBoundingClientRect().height))
-    }));
-
-    expect(mobileLayout.formGroups).toEqual(expect.arrayContaining(['column']));
-    expect(new Set(mobileLayout.formGroups)).toEqual(new Set(['column']));
-    expect(mobileLayout.toggleRow).toBe('wrap');
-    expect(mobileLayout.credentialTargets).toEqual([
-      expect.objectContaining({ selector: '#config-cf-url', hitSelf: true }),
-      expect.objectContaining({ selector: '#config-cf-token', hitSelf: true })
-    ]);
-    expect(mobileLayout.enabledVisible).toBe(true);
-    expect(mobileLayout.credentialTargets.every(target => target.height >= 44)).toBe(true);
-    expect(mobileLayout.toggleWidths.every(width => width <= 64)).toBe(true);
-    expect(mobileLayout.toggleHeights.every(height => height <= 36)).toBe(true);
-  });
-
-  test('captures Sync Center and Backup & Restauração visual QA evidence', async ({ page }, testInfo) => {
-    const state = createE2EState();
-    state.config.localBackupAt = '2026-04-30T10:00:00.000Z';
-    state.config.firestoreSync = {
-      enabled: true,
-      mode: 'primary',
-      remoteUpdatedAt: '2026-04-30T10:05:00.000Z',
-      lastPushAt: '2026-04-30T10:05:00.000Z',
-      hasPendingWrites: false
-    };
-    state.config.entitySync = { enabled: true, mode: 'primary', lastShadowDiff: { ok: true } };
-    state.config.cfSyncEnabled = true;
-    state.config.cfUrl = 'https://sync.example.test';
-    state.config.cfTokenSaved = true;
-    state.config.cfLastSyncAt = '2026-04-30T10:10:00.000Z';
-    state.driveFileId = 'drive-file';
-    state.lastSync = '2026-04-30T10:15:00.000Z';
-
-    await seedLegacyState(page, state);
-    await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto('/');
-    await page.click('[data-view="config"]');
-
-    const syncCenter = page.locator('[data-testid="sync-center"]');
-    const backupCenter = page.locator('[data-testid="backup-center"]');
-    await expect(syncCenter).toBeVisible();
-    await expect(backupCenter).toBeVisible();
-    await expect(syncCenter).toContainText('Central de Sincroniza');
-    await expect(backupCenter).toContainText('Backup & Restaura');
-
-    const syncShot = await syncCenter.screenshot();
-    const backupShot = await backupCenter.screenshot();
-    await testInfo.attach('sync-center-visual-qa', {
-      body: syncShot,
-      contentType: 'image/png'
-    });
-    await testInfo.attach('backup-center-visual-qa', {
-      body: backupShot,
-      contentType: 'image/png'
-    });
-
-    expect(syncShot.length).toBeGreaterThan(1000);
-    expect(backupShot.length).toBeGreaterThan(1000);
+    expect(overflow).toEqual([]);
   });
 
   test('recovers the latest IndexedDB state after an abrupt tab close', async ({ page, context }) => {
@@ -429,44 +281,6 @@ test.describe('App de estudos', () => {
     await reopened.click('[data-view="med"]');
 
     await expect(reopened.locator('#main-content')).toContainText('Recuperacao apos fechamento abrupto');
-  });
-
-  test('shows simulated Firestore entity conflict actions without applying remote data', async ({ page }) => {
-    const state = createE2EState();
-    state.config.firestoreSync = {
-      enabled: true,
-      mode: 'primary',
-      configured: true,
-      signedIn: true,
-      conflict: {
-        type: 'entity-conflict',
-        detectedAt: '2026-04-30T10:30:00.000Z',
-        total: 1,
-        items: [
-          {
-            key: 'eventos/ev_conflict',
-            collection: 'eventos',
-            id: 'ev_conflict',
-            hint: 'remote-newer',
-            localRevision: 2,
-            remoteRevision: 3,
-            localUpdatedAt: '2026-04-30T10:10:00.000Z',
-            remoteUpdatedAt: '2026-04-30T10:20:00.000Z'
-          }
-        ]
-      }
-    };
-
-    await seedLegacyState(page, state);
-    await page.goto('/');
-    await page.click('[data-view="config"]');
-
-    const conflict = page.locator('[data-testid="sync-source-conflict-entities"]').first();
-    await expect(conflict).toBeVisible();
-    await expect(conflict).toContainText('Entidades afetadas');
-    await expect(conflict.locator('[data-action="entity-conflict-keep-local"]')).toBeVisible();
-    await expect(conflict.locator('[data-action="entity-conflict-keep-remote"]')).toBeVisible();
-    await expect(page.locator('[data-action="firestore-open-conflict-review"]').first()).toBeVisible();
   });
 
   test('persists Banca Analyzer ranking through the extracted view module', async ({ page }) => {
